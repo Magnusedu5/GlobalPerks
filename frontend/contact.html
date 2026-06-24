@@ -90,6 +90,7 @@
     .social-icon svg{width:16px;height:16px;fill:var(--text-secondary-light);}
     @media(max-width:768px){.footer-inner{grid-template-columns:1fr;}}
   </style>
+<script src="config.js"></script>
 </head>
 <body>
 
@@ -214,9 +215,7 @@
   document.getElementById('hamburger').addEventListener('click',()=>document.getElementById('nav-overlay').classList.add('open'));
   document.getElementById('close-nav').addEventListener('click',()=>document.getElementById('nav-overlay').classList.remove('open'));
 
-  const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:8000'
-    : 'https://globalperks.onrender.com';
+  const BACKEND_URL = window.GP_BACKEND;
 
   const form = document.getElementById('booking-form');
   const submitBtn = document.getElementById('submit-btn');
@@ -312,9 +311,8 @@
 </script>
 <script>
 (function () {
-  var B = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-    ? 'http://localhost:8000' : 'https://globalperks.onrender.com';
-  var K = 'gp_site_content', T = 300000;
+  var B = window.GP_BACKEND;
+var K = 'gp_site_content', T = 300000;
   function inject(c) {
     document.querySelectorAll('[data-content]').forEach(function(el) {
       var k = el.getAttribute('data-content');

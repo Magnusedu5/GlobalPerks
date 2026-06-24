@@ -467,6 +467,7 @@
     .featured-section .view-all a { color: var(--burgundy); }
     .featured-section .photo-cat { color: var(--caramel); }
   </style>
+<script src="config.js"></script>
 </head>
 <body>
 
@@ -724,9 +725,8 @@
 </script>
 <script>
 (function () {
-  var B = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-    ? 'http://localhost:8000' : 'https://globalperks.onrender.com';
-  var K = 'gp_site_content', T = 300000;
+  var B = window.GP_BACKEND;
+var K = 'gp_site_content', T = 300000;
   function inject(c) {
     document.querySelectorAll('[data-content]').forEach(function(el) {
       var k = el.getAttribute('data-content');
