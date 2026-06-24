@@ -1,0 +1,272 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}Site Content — GlobalPerks Admin{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .main { max-width: none; padding: 0; display: flex; }
+
+  .cms-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+  }
+  .sidebar-heading {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 12px;
+    margin-bottom: 12px;
+  }
+  .sidebar-link {
+    display: block;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    border-radius: 2px;
+    margin-bottom: 2px;
+    letter-spacing: 0.02em;
+    transition: color 0.15s, background 0.15s;
+  }
+  .sidebar-link:hover { color: var(--text); background: rgba(255,255,255,0.03); text-decoration: none; }
+  .sidebar-link.active { color: var(--gold); background: rgba(196,117,58,0.08); text-decoration: none; }
+
+  .cms-content {
+    flex: 1;
+    padding: 32px;
+    max-width: 860px;
+    overflow-y: auto;
+  }
+  .cms-page-title {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .cms-page-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .cms-section { margin-bottom: 28px; }
+  .cms-section-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .cms-section-rule {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 10px 0 20px;
+  }
+
+  .cms-field { margin-bottom: 18px; }
+  .cms-field-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .cms-input, .cms-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .cms-input:focus, .cms-textarea:focus { border-color: var(--gold); }
+  .cms-textarea { resize: vertical; line-height: 1.6; }
+
+  .cms-image-field { margin-bottom: 20px; }
+  .cms-image-preview {
+    display: block;
+    max-height: 140px;
+    max-width: 240px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 8px;
+  }
+  .cms-image-placeholder {
+    width: 240px;
+    height: 100px;
+    background: var(--surface-raised);
+    border: 1px dashed var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 12px;
+    border-radius: 2px;
+    margin-bottom: 8px;
+  }
+  .cms-image-actions { display: flex; gap: 8px; align-items: center; }
+
+  .cms-save-btn {
+    background: var(--gold);
+    color: #0A0604;
+    border: none;
+    padding: 10px 24px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    margin-top: 4px;
+    transition: opacity 0.2s;
+  }
+  .cms-save-btn:hover { opacity: 0.85; }
+
+  .cms-remove-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+  }
+  .cms-remove-btn:hover { color: var(--red); }
+
+  .cms-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cms-sidebar">
+  <div class="sidebar-heading">Sections</div>
+  {% for section in sections_list %}
+  <a href="#{{ section.key }}" class="sidebar-link" data-section="{{ section.key }}">{{ section.label }}</a>
+  {% endfor %}
+</div>
+
+<div class="cms-content">
+  <div class="cms-page-title">Site Content</div>
+  <div class="cms-page-sub">Edit text and images that appear on the public website. Changes reflect within 5 minutes.</div>
+
+  {% if saved_section or saved_image %}
+  <div class="banner banner-success" id="success-banner">Changes saved successfully.</div>
+  {% endif %}
+
+  {% if error %}
+  <div class="banner banner-error">
+    {% if error == 'missing_image' %}Please select an image to upload.
+    {% elif error == 'invalid_type' %}Only JPG, PNG, or WEBP images are allowed.
+    {% else %}Something went wrong. Please try again.{% endif %}
+  </div>
+  {% endif %}
+
+  {% for section in sections_list %}
+  <div class="card cms-section" id="{{ section.key }}">
+    <div class="cms-section-title">{{ section.label }}</div>
+    <hr class="cms-section-rule">
+
+    {% for item in section.items %}
+    {% if item.type == 'image' %}
+    <div class="cms-image-field">
+      <label class="cms-field-label">{{ item.label }}</label>
+      {% if item.preview_url %}
+      <img src="{{ item.preview_url }}" class="cms-image-preview" alt="{{ item.label }}">
+      {% else %}
+      <div class="cms-image-placeholder">No image uploaded</div>
+      {% endif %}
+      <div class="cms-image-actions">
+        <form method="post" enctype="multipart/form-data" action="/admin-panel/cms/" style="margin:0;">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="upload_image">
+          <input type="hidden" name="key" value="{{ item.key }}">
+          <label class="btn-sm" style="cursor:pointer;">
+            <input type="file" name="image" accept="image/jpeg,image/png,image/webp"
+                   style="display:none;" onchange="this.form.submit()">
+            {% if item.preview_url %}Replace{% else %}Upload{% endif %} image
+          </label>
+        </form>
+        {% if item.preview_url %}
+        <form method="post" action="/admin-panel/cms/delete-image/{{ item.key }}/" style="margin:0;">
+          {% csrf_token %}
+          <button type="submit" class="cms-remove-btn"
+                  onclick="return confirm('Remove this image?')">Remove</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    {% if section.has_text %}
+    {% if section.items.0.type == 'image' %}
+    <hr class="cms-divider">
+    {% endif %}
+    <form method="post" action="/admin-panel/cms/">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="save_text">
+      <input type="hidden" name="section" value="{{ section.key }}">
+      {% for item in section.items %}
+      {% if item.type == 'text' %}
+      <div class="cms-field">
+        <label class="cms-field-label">{{ item.label }}</label>
+        {% if item.value|length > 80 %}
+        <textarea name="{{ item.key }}" rows="3" class="cms-textarea">{{ item.value }}</textarea>
+        {% else %}
+        <input type="text" name="{{ item.key }}" value="{{ item.value }}" class="cms-input">
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endfor %}
+      <button type="submit" class="cms-save-btn">Save {{ section.label }}</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+(function () {
+  const links = document.querySelectorAll('.sidebar-link');
+  const sections = document.querySelectorAll('.cms-section');
+  if (!sections.length) return;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '-56px 0px -60% 0px' });
+  sections.forEach(s => obs.observe(s));
+
+  const banner = document.getElementById('success-banner');
+  if (banner) {
+    setTimeout(() => {
+      banner.style.transition = 'opacity 0.5s';
+      banner.style.opacity = '0';
+    }, 3000);
+  }
+})();
+</script>
+{% endblock %}

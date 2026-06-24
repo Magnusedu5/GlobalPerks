@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: globalperks
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python scripts/init_db.py
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: globalperks.onrender.com
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://globalperks-site.onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://globalperks.onrender.com
+      - key: BACKEND_URL
+        value: https://globalperks.onrender.com
+      - key: RESEND_FROM_EMAIL
+        value: bookings@globalperks.com
+      # Fill these in the Render dashboard — do not commit secrets
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: NOTIFICATION_EMAIL
+        sync: false
+      - key: GOOGLE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: GOOGLE_CALENDAR_ID
+        sync: false
+    # Uncomment to persist CMS-uploaded images across deploys ($7/mo)
+    # disk:
+    #   name: media
+    #   mountPath: /opt/render/project/src/media
+    #   sizeGB: 1
+
+  - type: web
+    name: globalperks-site
+    runtime: static
+    rootDir: frontend
+    staticPublishPath: .
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate

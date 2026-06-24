@@ -1,0 +1,178 @@
+{% extends "admin_panel/base.html" %}
+{% block title %}Bookings — GlobalPerks Admin{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 400px) { .stats-grid { grid-template-columns: 1fr; } }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+  }
+  .stat-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .stat-number {
+    font-size: 32px;
+    color: var(--gold);
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .page-header h1 {
+    font-size: 20px;
+    font-weight: 400;
+  }
+  .result-count {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .filter-pill {
+    padding: 6px 16px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    font-family: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .filter-pill:hover { border-color: var(--gold-dim); color: var(--text); text-decoration: none; }
+  .filter-pill.active { border-color: var(--gold); color: var(--gold); }
+
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead { background: var(--surface); }
+  th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  td {
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .td-muted { color: var(--muted); }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+  }
+  .empty-state h2 { font-size: 18px; font-weight: 400; margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Total Bookings</div>
+    <div class="stat-number">{{ stats.total }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Pending</div>
+    <div class="stat-number">{{ stats.pending }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Confirmed This Month</div>
+    <div class="stat-number">{{ stats.confirmed_this_month }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Completed</div>
+    <div class="stat-number">{{ stats.completed }}</div>
+  </div>
+</div>
+
+<div class="page-header">
+  <h1>Bookings</h1>
+  <span class="result-count">{{ bookings|length }} result{{ bookings|length|pluralize }}</span>
+</div>
+
+<div class="filter-bar">
+  <a href="?" class="filter-pill {% if not current_filter %}active{% endif %}">All</a>
+  <a href="?status=pending" class="filter-pill {% if current_filter == 'pending' %}active{% endif %}">Pending</a>
+  <a href="?status=confirmed" class="filter-pill {% if current_filter == 'confirmed' %}active{% endif %}">Confirmed</a>
+  <a href="?status=declined" class="filter-pill {% if current_filter == 'declined' %}active{% endif %}">Declined</a>
+  <a href="?status=completed" class="filter-pill {% if current_filter == 'completed' %}active{% endif %}">Completed</a>
+  <a href="?status=archived" class="filter-pill {% if current_filter == 'archived' %}active{% endif %}">Archived</a>
+</div>
+
+{% if bookings %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Date Received</th>
+        <th>Client</th>
+        <th>Service</th>
+        <th>Preferred Date</th>
+        <th>Status</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in bookings %}
+      <tr>
+        <td class="td-muted">{{ b.created_at|slice:":10" }}</td>
+        <td>{{ b.name }}</td>
+        <td>{{ b.service|title }}</td>
+        <td>{{ b.preferred_date }}</td>
+        <td><span class="badge badge-{{ b.status }}">{{ b.status }}</span></td>
+        <td><a href="/admin-panel/bookings/{{ b.id }}/">View &rarr;</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <h2>No bookings yet</h2>
+  {% if current_filter %}
+  <p>No bookings with status "{{ current_filter }}".</p>
+  {% else %}
+  <p>Booking requests will appear here once clients submit the form.</p>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

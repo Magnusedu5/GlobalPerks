@@ -1,0 +1,116 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Create Gallery — GlobalPerks Admin{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:20px;">
+  <a href="/admin-panel/galleries/" style="font-size:13px; color:var(--muted);">← Back to Galleries</a>
+</div>
+
+<h1 style="font-size:24px; font-weight:400; color:var(--text); margin-bottom:24px;">Create New Gallery</h1>
+
+{% if errors.general %}
+<div class="banner banner-error" style="margin-bottom:20px;">{{ errors.general }}</div>
+{% endif %}
+
+<div class="card" style="max-width:640px;">
+  <form method="post">
+    {% csrf_token %}
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block; font-size:11px; font-weight:700; letter-spacing:0.1em;
+                    text-transform:uppercase; color:var(--muted); margin-bottom:6px;">
+        Album Title <span style="color:var(--red);">*</span>
+      </label>
+      <input type="text" name="title" value="{{ form_data.title }}" required
+             placeholder="e.g. Amara &amp; David Wedding 2025"
+             style="width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+                    padding:10px 12px; font-family:inherit; font-size:14px; outline:none;
+                    transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--gold)'"
+             onblur="this.style.borderColor='var(--border)'">
+      {% if errors.title %}<div style="color:#F09595; font-size:12px; margin-top:4px;">{{ errors.title }}</div>{% endif %}
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block; font-size:11px; font-weight:700; letter-spacing:0.1em;
+                    text-transform:uppercase; color:var(--muted); margin-bottom:6px;">
+        Client Name <span style="color:var(--red);">*</span>
+      </label>
+      <input type="text" name="client_name" value="{{ form_data.client_name }}" required
+             style="width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+                    padding:10px 12px; font-family:inherit; font-size:14px; outline:none;
+                    transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--gold)'"
+             onblur="this.style.borderColor='var(--border)'">
+      {% if errors.client_name %}<div style="color:#F09595; font-size:12px; margin-top:4px;">{{ errors.client_name }}</div>{% endif %}
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block; font-size:11px; font-weight:700; letter-spacing:0.1em;
+                    text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Client Email</label>
+      <input type="email" name="client_email" value="{{ form_data.client_email }}"
+             style="width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+                    padding:10px 12px; font-family:inherit; font-size:14px; outline:none;
+                    transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--gold)'"
+             onblur="this.style.borderColor='var(--border)'">
+      <div style="font-size:12px; color:var(--muted); margin-top:4px;">Optional — for your records only</div>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block; font-size:11px; font-weight:700; letter-spacing:0.1em;
+                    text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Shoot Date</label>
+      <input type="date" name="shoot_date" value="{{ form_data.shoot_date }}"
+             style="width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+                    padding:10px 12px; font-family:inherit; font-size:14px; outline:none;
+                    transition:border-color 0.2s; color-scheme:dark;" onfocus="this.style.borderColor='var(--gold)'"
+             onblur="this.style.borderColor='var(--border)'">
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block; font-size:11px; font-weight:700; letter-spacing:0.1em;
+                    text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Description</label>
+      <textarea name="description" rows="3"
+                placeholder="Add any notes about this shoot..."
+                style="width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+                       padding:10px 12px; font-family:inherit; font-size:14px; outline:none; resize:vertical;
+                       transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--gold)'"
+                onblur="this.style.borderColor='var(--border)'">{{ form_data.description }}</textarea>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block; font-size:11px; font-weight:700; letter-spacing:0.1em;
+                    text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Custom URL Slug</label>
+      <input type="text" name="slug" value="{{ form_data.slug }}"
+             placeholder="e.g. amara-david-wedding-2025"
+             style="width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+                    padding:10px 12px; font-family:inherit; font-size:14px; outline:none;
+                    transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--gold)'"
+             onblur="this.style.borderColor='var(--border)'">
+      <div style="font-size:12px; color:var(--muted); margin-top:4px;">
+        Leave blank to auto-generate from title. Will appear as:
+        <span style="color:var(--gold);">globalperks.com/gallery/your-slug-here</span>
+      </div>
+      {% if errors.slug %}<div style="color:#F09595; font-size:12px; margin-top:4px;">{{ errors.slug }}</div>{% endif %}
+    </div>
+
+    <div style="margin-bottom:28px;">
+      <label style="display:block; font-size:11px; font-weight:700; letter-spacing:0.1em;
+                    text-transform:uppercase; color:var(--muted); margin-bottom:6px;">
+        Gallery Password <span style="color:var(--red);">*</span>
+      </label>
+      <input type="password" name="password" required minlength="4"
+             style="width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+                    padding:10px 12px; font-family:inherit; font-size:14px; outline:none;
+                    transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--gold)'"
+             onblur="this.style.borderColor='var(--border)'">
+      <div style="font-size:12px; color:var(--muted); margin-top:4px;">
+        Share this password with your client so they can view their photos
+      </div>
+      {% if errors.password %}<div style="color:#F09595; font-size:12px; margin-top:4px;">{{ errors.password }}</div>{% endif %}
+    </div>
+
+    <button type="submit" class="btn-primary" style="width:100%; padding:12px; font-size:13px;">
+      Create Gallery
+    </button>
+  </form>
+</div>
+{% endblock %}

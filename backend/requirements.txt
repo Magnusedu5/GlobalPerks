@@ -1,0 +1,12 @@
+django>=5.0,<6.0
+djangorestframework>=3.15
+libsql>=0.1.0
+resend>=2.0.0
+google-api-python-client>=2.100.0
+google-auth>=2.23.0
+google-auth-httplib2>=0.1.0
+bcrypt>=4.0.0
+python-dotenv>=1.0.0
+gunicorn>=21.0.0
+django-cors-headers>=4.3.0
+whitenoise>=6.6.0

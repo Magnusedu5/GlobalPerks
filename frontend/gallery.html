@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Gallery — GlobalPerks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@1&family=Playfair+Display:ital@1&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #0A0604; }
+
+    #password-gate {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #0A0604;
+      transition: opacity 0.4s ease;
+    }
+    .unlock-card {
+      width: 100%; max-width: 420px;
+      padding: 48px 40px;
+      background: #1C0E08;
+      border: 1px solid #3D1F14;
+    }
+    .brand {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 28px; color: #D4A574; font-weight: 400;
+    }
+    .unlock-heading {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 22px; color: #FAF0E6; margin: 16px 0 8px;
+    }
+    .unlock-sub {
+      font-family: 'Lato', sans-serif; font-size: 14px;
+      color: #C4A882; font-weight: 300; margin-bottom: 32px;
+    }
+    .unlock-input {
+      width: 100%; padding: 14px 16px;
+      background: #120A06; border: 1px solid #3D1F14;
+      color: #FAF0E6; font-family: 'Lato', sans-serif; font-size: 15px;
+      margin-bottom: 12px; border-radius: 0; outline: none;
+      transition: border-color 0.2s;
+    }
+    .unlock-input:focus { border-color: #C4753A; }
+    .unlock-btn {
+      width: 100%; padding: 14px;
+      background: #7A2E2E; color: #FAF0E6;
+      border: none; font-family: 'Lato', sans-serif;
+      font-size: 14px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .unlock-btn:hover { background: #9B3A3A; }
+    .unlock-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .unlock-error {
+      margin-top: 12px; padding: 10px 14px;
+      background: rgba(226,75,74,0.1); border: 1px solid rgba(226,75,74,0.3);
+      color: #F09595; font-family: 'Lato', sans-serif; font-size: 13px;
+    }
+
+    #gallery-experience { position: fixed; inset: 0; background: #0A0604; }
+    #current-photo {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      max-height: 85vh; max-width: 90vw; object-fit: contain;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      display: block; user-select: none; -webkit-user-drag: none;
+    }
+    .gradient-top {
+      position: fixed; top: 0; left: 0; right: 0; height: 160px;
+      background: linear-gradient(to bottom, rgba(10,6,4,0.85) 0%, transparent 100%);
+      pointer-events: none; z-index: 2;
+    }
+    .gradient-bottom {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 220px;
+      background: linear-gradient(to top, rgba(10,6,4,0.9) 0%, transparent 100%);
+      pointer-events: none; z-index: 2;
+    }
+    .gallery-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 32px;
+    }
+    .gallery-brand {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-size: 20px; color: #D4A574;
+    }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .photo-counter { font-family: 'Lato', sans-serif; font-size: 13px; color: #C4A882; }
+    .download-btn {
+      font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: #FAF0E6; text-decoration: none;
+      border: 1px solid rgba(250,240,230,0.3); padding: 8px 16px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .download-btn:hover { border-color: #D4A574; color: #D4A574; }
+    .gallery-footer {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 24px 32px 28px;
+    }
+    .client-name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic; font-size: 18px; color: #FAF0E6;
+    }
+    #progress-dots { display: flex; gap: 6px; align-items: center; }
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(250,240,230,0.3); border: none; cursor: pointer;
+      transition: background 0.2s, transform 0.2s; padding: 0;
+    }
+    .dot.active { background: #D4A574; transform: scale(1.4); }
+    .dot:hover { background: rgba(250,240,230,0.6); }
+    .nav-btn {
+      position: fixed; top: 50%; z-index: 10;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #FAF0E6; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s; transform: translateY(-50%);
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.15); }
+    #prev-btn { left: 24px; }
+    #next-btn { right: 24px; }
+    .play-pause-btn {
+      position: fixed; bottom: 72px; left: 50%; transform: translateX(-50%);
+      z-index: 10; width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #FAF0E6; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .play-pause-btn:hover { background: rgba(255,255,255,0.15); }
+    @media (max-width: 600px) {
+      .gallery-header { padding: 16px 20px; }
+      .gallery-footer { padding: 16px 20px 20px; }
+      .gallery-brand { font-size: 16px; }
+      #prev-btn { left: 12px; }
+      #next-btn { right: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Password Gate -->
+<div id="password-gate">
+  <div class="unlock-card">
+    <div class="brand">GlobalPerks</div>
+    <h1 class="unlock-heading">Your gallery is ready</h1>
+    <p class="unlock-sub">Enter the password Perfecta shared with you</p>
+    <input class="unlock-input" id="gallery-password" type="password"
+           placeholder="Gallery password" autocomplete="current-password">
+    <button class="unlock-btn" id="unlock-btn">View My Photos</button>
+    <div class="unlock-error" id="unlock-error" hidden></div>
+  </div>
+</div>
+
+<!-- Gallery Experience -->
+<div id="gallery-experience">
+  <div class="gradient-top"></div>
+  <div class="gradient-bottom"></div>
+
+  <img id="current-photo" src="" alt="Gallery photo">
+
+  <header class="gallery-header">
+    <div class="gallery-brand">GlobalPerks</div>
+    <div class="header-right">
+      <span class="photo-counter" id="photo-counter"></span>
+      <a class="download-btn" id="download-btn" href="#" download>↓ Save</a>
+    </div>
+  </header>
+
+  <footer class="gallery-footer">
+    <div class="client-name" id="client-name"></div>
+    <div id="progress-dots"></div>
+    <div></div>
+  </footer>
+
+  <button class="nav-btn" id="prev-btn" aria-label="Previous photo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <polyline points="15,18 9,12 15,6"/>
+    </svg>
+  </button>
+
+  <button class="nav-btn" id="next-btn" aria-label="Next photo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <polyline points="9,18 15,12 9,6"/>
+    </svg>
+  </button>
+
+  <button class="play-pause-btn" id="play-pause-btn" aria-label="Play slideshow"></button>
+</div>
+
+<script>
+const BACKEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://globalperks.onrender.com';
+
+const slug = window.location.pathname.split('/').filter(Boolean)[1];
+
+let photos = [];
+let currentIndex = 0;
+let isPlaying = false;
+let slideshowTimer = null;
+let albumData = {};
+
+let passwordGate, galleryExperience, passwordInput,
+    unlockBtn, unlockError, currentPhoto, photoCounter,
+    clientNameEl, progressDots, prevBtn, nextBtn,
+    playPauseBtn, downloadBtn;
+
+async function unlockGallery() {
+  const password = passwordInput.value.trim();
+  if (!password) return;
+
+  unlockBtn.textContent = 'Opening...';
+  unlockBtn.disabled = true;
+  unlockError.hidden = true;
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/gallery-api/${slug}/unlock/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+      credentials: 'include',
+    });
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      albumData = data.album;
+      await loadPhotos();
+    } else {
+      unlockError.textContent = data.error || 'Incorrect password. Please try again.';
+      unlockError.hidden = false;
+      unlockBtn.textContent = 'View My Photos';
+      unlockBtn.disabled = false;
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+  } catch (err) {
+    unlockError.textContent = 'Connection error. Please check your internet and try again.';
+    unlockError.hidden = false;
+    unlockBtn.textContent = 'View My Photos';
+    unlockBtn.disabled = false;
+  }
+}
+
+async function loadPhotos() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/gallery-api/${slug}/photos/`, {
+      credentials: 'include',
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      unlockError.textContent = 'Could not load photos. Please refresh and try again.';
+      unlockError.hidden = false;
+      unlockBtn.textContent = 'View My Photos';
+      unlockBtn.disabled = false;
+      return;
+    }
+
+    photos = data.photos;
+    albumData = { ...albumData, ...data.album };
+
+    passwordGate.style.opacity = '0';
+    setTimeout(() => {
+      passwordGate.style.display = 'none';
+      galleryExperience.style.display = 'block';
+      requestAnimationFrame(() => {
+        galleryExperience.style.opacity = '1';
+      });
+    }, 400);
+
+    clientNameEl.textContent = `${albumData.client_name}'s Gallery`;
+
+    photos.slice(0, 3).forEach(p => {
+      const img = new Image();
+      img.src = p.url;
+    });
+
+    showPhoto(0);
+    buildProgressDots();
+
+  } catch (err) {
+    unlockError.textContent = 'Failed to load gallery. Please refresh.';
+    unlockError.hidden = false;
+    unlockBtn.textContent = 'View My Photos';
+    unlockBtn.disabled = false;
+  }
+}
+
+function showPhoto(index) {
+  if (index < 0) index = photos.length - 1;
+  if (index >= photos.length) index = 0;
+  currentIndex = index;
+
+  currentPhoto.style.opacity = '0';
+  currentPhoto.style.transform = 'translate(-50%, -50%) scale(1.02)';
+
+  setTimeout(() => {
+    currentPhoto.src = photos[index].url;
+    currentPhoto.alt = photos[index].caption || `Photo ${index + 1}`;
+    currentPhoto.style.opacity = '1';
+    currentPhoto.style.transform = 'translate(-50%, -50%) scale(1)';
+  }, 300);
+
+  photoCounter.textContent = `${index + 1} / ${photos.length}`;
+
+  document.querySelectorAll('.dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+  });
+
+  downloadBtn.href = photos[index].url;
+  downloadBtn.download = photos[index].filename || `photo-${index + 1}.jpg`;
+
+  if (photos[index + 1]) {
+    const img = new Image();
+    img.src = photos[index + 1].url;
+  }
+}
+
+function goNext() { showPhoto(currentIndex + 1); }
+function goPrev() { showPhoto(currentIndex - 1); }
+
+function toggleSlideshow() {
+  isPlaying = !isPlaying;
+  if (isPlaying) {
+    playPauseBtn.innerHTML = pauseIcon();
+    slideshowTimer = setInterval(goNext, 5000);
+  } else {
+    playPauseBtn.innerHTML = playIcon();
+    clearInterval(slideshowTimer);
+  }
+}
+
+function buildProgressDots() {
+  progressDots.innerHTML = '';
+  const max = Math.min(photos.length, 30);
+  for (let i = 0; i < max; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'dot';
+    dot.setAttribute('aria-label', `Go to photo ${i + 1}`);
+    dot.addEventListener('click', () => showPhoto(i));
+    progressDots.appendChild(dot);
+  }
+}
+
+function playIcon() {
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polygon points="5,3 19,12 5,21"/></svg>`;
+}
+function pauseIcon() {
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  passwordGate      = document.getElementById('password-gate');
+  galleryExperience = document.getElementById('gallery-experience');
+  passwordInput     = document.getElementById('gallery-password');
+  unlockBtn         = document.getElementById('unlock-btn');
+  unlockError       = document.getElementById('unlock-error');
+  currentPhoto      = document.getElementById('current-photo');
+  photoCounter      = document.getElementById('photo-counter');
+  clientNameEl      = document.getElementById('client-name');
+  progressDots      = document.getElementById('progress-dots');
+  prevBtn           = document.getElementById('prev-btn');
+  nextBtn           = document.getElementById('next-btn');
+  playPauseBtn      = document.getElementById('play-pause-btn');
+  downloadBtn       = document.getElementById('download-btn');
+
+  unlockBtn.addEventListener('click', unlockGallery);
+  passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlockGallery(); });
+  prevBtn.addEventListener('click', goPrev);
+  nextBtn.addEventListener('click', goNext);
+  playPauseBtn.addEventListener('click', toggleSlideshow);
+  playPauseBtn.innerHTML = playIcon();
+
+  galleryExperience.style.display = 'none';
+  galleryExperience.style.opacity = '0';
+  galleryExperience.style.transition = 'opacity 0.6s ease';
+
+  document.addEventListener('keydown', e => {
+    if (galleryExperience.style.display === 'none') return;
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goNext(); }
+    if (e.key === 'ArrowLeft') goPrev();
+    if (e.key === 'Escape') { if (isPlaying) toggleSlideshow(); }
+  });
+
+  let touchStartX = 0;
+  galleryExperience.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  galleryExperience.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) { dx < 0 ? goNext() : goPrev(); }
+  });
+
+  if (!slug) {
+    unlockError.textContent = 'Gallery not found.';
+    unlockError.hidden = false;
+  }
+});
+</script>
+</body>
+</html>

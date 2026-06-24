@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlobalPerks Admin — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #100806;
+      font-family: 'Lato', 'Helvetica Neue', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      background: #1C0E08;
+      border: 1px solid #3D1F14;
+      padding: 40px;
+    }
+    .brand {
+      color: #C4753A;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 24px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+    }
+    .brand-sub {
+      font-family: 'Lato', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #C4A882;
+      margin-top: 4px;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #3D1F14;
+      margin: 24px 0;
+    }
+    .error-box {
+      background: rgba(226,75,74,0.1);
+      border: 1px solid rgba(226,75,74,0.3);
+      color: #F09595;
+      padding: 12px;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #C4A882;
+      margin-bottom: 8px;
+    }
+    input[type="password"] {
+      width: 100%;
+      background: #100806;
+      border: 1px solid #3D1F14;
+      color: #FAF0E6;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="password"]:focus {
+      border-color: #C4753A;
+    }
+    .btn-submit {
+      width: 100%;
+      background: #7A2E2E;
+      color: #FAF0E6;
+      border: none;
+      padding: 12px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover {
+      background: #9B3A3A;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="brand">GlobalPerks</div>
+    <div class="brand-sub">Admin</div>
+    <hr>
+    {% if error %}
+    <div class="error-box">{{ error }}</div>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" autofocus>
+      <button type="submit" class="btn-submit">Sign in</button>
+    </form>
+  </div>
+</body>
+</html>

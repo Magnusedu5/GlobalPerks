@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — GlobalPerks Photography</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--burgundy:#7A2E2E;--burgundy-light:#9B3A3A;--burgundy-pale:rgba(122,46,46,0.08);--terracotta:#C4753A;--terracotta-light:#D4956A;--caramel:#D4A574;--caramel-pale:rgba(212,165,116,0.15);--bg-dark:#120A06;--bg-surface:#1E0F08;--bg-card:#2A1510;--bg-cream:#FAF5EF;--bg-cream-deep:#F2E8DA;--border-dark:#3D1F14;--border-cream:#E0D0BC;--border-accent:rgba(212,165,116,0.4);--text-dark:#1A0A04;--text-light:#FAF0E6;--text-secondary-dark:#6B4A35;--text-secondary-light:#C4A882;--text-muted-dark:#A0826A;--text-muted-light:#7A5A44;--accent:#7A2E2E;--accent-hover:#9B3A3A;--accent-warm:#C4753A;--font-display:'Cormorant Garamond',Georgia,serif;--font-heading:'Playfair Display',Georgia,serif;--font-body:'Lato','Helvetica Neue',sans-serif;--nav-height:72px;--max-width:1200px;--gold-light:var(--caramel);--gold:var(--burgundy);--gold-dim:var(--terracotta);--border:var(--border-dark);--border-gold:var(--border-accent);--text-primary:var(--text-light);--text-secondary:var(--text-secondary-light);--text-muted:var(--text-secondary-light);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg-dark);color:var(--text-primary);font-family:var(--font-body);font-weight:300;line-height:1.8;}
+    img{display:block;max-width:100%;}
+    a{color:var(--caramel);text-decoration:none;}
+    .container{max-width:var(--max-width);margin:0 auto;padding:0 24px;}
+    .nav{position:fixed;top:0;left:0;right:0;height:var(--nav-height);z-index:100;background:rgba(18,10,6,0.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border-dark);display:flex;align-items:center;}
+    .nav-inner{max-width:var(--max-width);margin:0 auto;padding:0 24px;width:100%;display:flex;align-items:center;justify-content:space-between;}
+    .nav-brand{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:400;font-size:26px;letter-spacing:0.04em;color:var(--caramel);}
+    .nav-links{display:flex;list-style:none;gap:32px;}
+    .nav-links a{font-size:13px;font-weight:400;letter-spacing:0.06em;color:var(--text-secondary);transition:color 0.2s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--caramel);}
+    .btn{font-family:'Lato',sans-serif;font-weight:700;font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.875rem 2.5rem;border-radius:0;cursor:pointer;transition:all 0.2s ease;display:inline-block;text-decoration:none;}
+    .btn-primary{background:var(--burgundy);color:#FAF0E6;border:1px solid var(--burgundy);}
+    .btn-primary:hover{background:var(--burgundy-light);border-color:var(--burgundy-light);}
+    .btn-ghost{background:transparent;color:var(--text-light);border:1px solid rgba(250,240,230,0.35);}
+    .btn-ghost:hover{border-color:var(--caramel);color:var(--caramel);}
+    .btn-nav{padding:0.5rem 1.25rem;font-size:0.75rem;border-color:var(--caramel);color:var(--caramel);background:transparent;}
+    .btn-nav:hover{background:var(--burgundy);color:#FAF0E6;border-color:var(--burgundy);}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;}
+    .hamburger span{display:block;width:22px;height:1px;background:var(--text-secondary);}
+    .nav-overlay{display:none;position:fixed;inset:0;background:var(--bg-dark);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
+    .nav-overlay.open{display:flex;}
+    .nav-overlay a{font-size:1.5rem;color:var(--text-primary);}
+    .nav-overlay a:hover{color:var(--caramel);}
+    .nav-overlay .close-btn{position:absolute;top:24px;right:24px;background:none;border:none;color:var(--text-secondary);font-size:24px;cursor:pointer;}
+    @media(max-width:768px){.nav-links,.btn-nav{display:none;}.hamburger{display:flex;}}
+
+    .page-hero{min-height:50vh;background:linear-gradient(160deg,#2A1510 0%,#120A06 60%,#1E0F08 100%);display:flex;align-items:center;padding-top:var(--nav-height);}
+    .page-hero-content{padding:40px 24px;max-width:var(--max-width);margin:0 auto;}
+    .eyebrow{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--terracotta);margin-bottom:16px;}
+    .page-hero h1{font-family:var(--font-heading);font-size:clamp(2.5rem,6vw,4.5rem);color:var(--text-light);line-height:1.1;margin-bottom:16px;}
+    .page-hero p{font-size:1rem;color:var(--text-secondary-light);font-weight:300;}
+
+    /* BIO */
+    .bio-section{padding:100px 0;background:var(--bg-cream);}
+    .bio-inner{position:relative;}
+    .bio-image{float:right;margin:0 0 40px 60px;width:40%;max-width:480px;}
+    .bio-image img{width:100%;aspect-ratio:3/4;object-fit:cover;}
+    .bio-text h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);color:var(--text-dark);margin-bottom:32px;}
+    .bio-text p{font-size:14px;color:var(--text-secondary-dark);font-weight:300;margin-bottom:24px;line-height:1.9;}
+    .pull-quote{font-family:var(--font-display);font-style:italic;font-size:1.4rem;color:var(--burgundy);border-left:3px solid var(--burgundy);padding-left:24px;margin:32px 0;line-height:1.5;}
+    @media(max-width:768px){.bio-image{float:none;width:100%;max-width:100%;margin:0 0 32px 0;}.bio-image img{aspect-ratio:4/3;}}
+
+    /* VALUES */
+    .values-section{background:var(--bg-cream-deep);padding:80px 0;}
+    .values-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:0;}
+    .value-item{text-align:center;padding:40px 24px;position:relative;}
+    .value-item+.value-item::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);height:60%;width:1px;background:var(--border-cream);}
+    .value-word{font-family:var(--font-heading);font-size:2rem;color:var(--burgundy);margin-bottom:12px;}
+    .value-desc{font-size:13px;color:var(--text-secondary-dark);line-height:1.7;font-weight:300;}
+    @media(max-width:600px){.values-strip{grid-template-columns:1fr;}.value-item+.value-item::before{display:none;}}
+
+    /* CREDENTIALS */
+    .credentials-section{padding:80px 0;background:var(--bg-cream);}
+    .section-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--burgundy);margin-bottom:16px;}
+    .section-title{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);color:var(--text-dark);margin-bottom:48px;}
+    .creds-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+    .cred-card{background:#FFFFFF;border:1px solid var(--border-cream);padding:24px;text-align:center;}
+    .cred-number{font-family:var(--font-heading);font-size:2.5rem;color:var(--burgundy);margin-bottom:8px;}
+    .cred-label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted-dark);}
+    @media(max-width:768px){.creds-grid{grid-template-columns:repeat(2,1fr);}}
+
+    /* CTA */
+    .cta-band{background:var(--bg-surface);border-top:1px solid var(--border-accent);border-bottom:1px solid var(--border-accent);text-align:center;padding:80px 24px;}
+    .cta-band h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,3rem);color:var(--text-light);margin-bottom:16px;}
+    .cta-band p{font-size:14px;color:var(--text-secondary-light);margin-bottom:32px;}
+    footer{background:var(--bg-dark);border-top:1px solid var(--border-dark);padding:48px 24px;}
+    .footer-inner{max-width:var(--max-width);margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;}
+    .footer-brand{font-family:var(--font-display);font-style:italic;font-size:20px;color:var(--caramel);margin-bottom:8px;}
+    .footer-tagline{font-size:13px;color:var(--text-secondary-light);margin-bottom:16px;}
+    .footer-copy{font-size:11px;color:var(--text-secondary-light);}
+    .footer-links{list-style:none;}
+    .footer-links li{margin-bottom:8px;}
+    .footer-links a{font-size:13px;color:var(--text-secondary-light);}
+    .footer-links a:hover{color:var(--caramel);}
+    .footer-follow-label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-secondary-light);margin-bottom:16px;}
+    .social-icons{display:flex;gap:16px;}
+    .social-icon{width:36px;height:36px;border:1px solid var(--border-dark);display:flex;align-items:center;justify-content:center;}
+    .social-icon svg{width:16px;height:16px;fill:var(--text-secondary-light);}
+    @media(max-width:768px){.footer-inner{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">GlobalPerks</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li><li><a href="portfolio.html">Portfolio</a></li>
+      <li><a href="services.html">Services</a></li><li><a href="about.html" class="active">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="btn btn-ghost btn-nav">Book a Session</a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-overlay" id="nav-overlay">
+  <button class="close-btn" id="close-nav">&times;</button>
+  <a href="index.html">Home</a><a href="portfolio.html">Portfolio</a>
+  <a href="services.html">Services</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+</div>
+
+<section class="page-hero">
+  <div class="page-hero-content">
+    <div class="eyebrow">About</div>
+    <h1 data-content="about_hero_title">Behind the Lens</h1>
+    <p data-content="about_hero_sub">The story of a photographer obsessed with light and truth.</p>
+  </div>
+</section>
+
+<!-- BIO -->
+<section class="bio-section">
+  <div class="container">
+    <div class="bio-inner">
+      <div class="bio-image">
+        <img src="https://picsum.photos/seed/gpabout2/600/700" alt="The photographer" loading="lazy" data-src="about_bio_image">
+      </div>
+      <div class="bio-text">
+        <h2 data-content="about_bio_h2">The story behind GlobalPerks</h2>
+        <div class="pull-quote" data-content="about_pull_quote">"GlobalPerks started with one simple thing... people saw beauty in what I captured."</div>
+        <p data-content="about_bio_p1">Before GlobalPerks had a name, it had a feeling. Perfecta picked up a camera not because she planned a career, but because people kept stopping to ask about the photos she was taking. What started as curiosity became a calling.</p>
+        <p data-content="about_bio_p2">Based in Calabar and available to travel anywhere the story leads, Perfecta has spent five years building a body of work that spans personal portraits, corporate headshots, maternity sessions, brand campaigns, and live events. Her clients range from fresh graduates marking a milestone to established brands building their visual identity.</p>
+        <p data-content="about_bio_p3">Her approach is simple: make people feel comfortable, then capture them when they forget she's there. The result is images that feel both polished and real — because they are.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="values-section">
+  <div class="container">
+    <div class="values-strip">
+      <div class="value-item">
+        <div class="value-word" data-content="about_value_1_word">Light</div>
+        <div class="value-desc" data-content="about_value_1_desc">Every session is built around beautiful, flattering light.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-word" data-content="about_value_2_word">People</div>
+        <div class="value-desc" data-content="about_value_2_desc">She photographs people, not poses — the real moments land hardest.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-word" data-content="about_value_3_word">Story</div>
+        <div class="value-desc" data-content="about_value_3_desc">Each image is a frame in something larger — your story.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CREDENTIALS -->
+<section class="credentials-section">
+  <div class="container">
+    <div class="section-label">By the numbers</div>
+    <div class="section-title">A track record worth trusting</div>
+    <div class="creds-grid">
+      <div class="cred-card"><div class="cred-number" data-content="about_cred_1_number">295+</div><div class="cred-label" data-content="about_cred_1_label">Sessions Completed</div></div>
+      <div class="cred-card"><div class="cred-number" data-content="about_cred_2_number">5+</div><div class="cred-label" data-content="about_cred_2_label">Years Shooting</div></div>
+      <div class="cred-card"><div class="cred-number" data-content="about_cred_3_number">Calabar</div><div class="cred-label" data-content="about_cred_3_label">Home Base</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-band">
+  <h2 data-content="about_cta_headline">Let's Create Something Beautiful</h2>
+  <p data-content="about_cta_sub">Every great photograph starts with a conversation.</p>
+  <a href="contact.html" class="btn btn-primary">Book a Session</a>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div><div class="footer-brand">GlobalPerks</div><div class="footer-tagline" data-content="footer_tagline">Capturing beauty in moments.</div><div class="footer-location" data-content="footer_location"></div><div class="footer-copy">&copy; 2024 GlobalPerks.</div></div>
+    <div><ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="services.html">Services</a></li><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div><div class="footer-follow-label">Follow</div><div class="social-icons"><a href="#" class="social-icon" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a></div></div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click',()=>document.getElementById('nav-overlay').classList.add('open'));
+  document.getElementById('close-nav').addEventListener('click',()=>document.getElementById('nav-overlay').classList.remove('open'));
+</script>
+<script>
+(function () {
+  var B = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://localhost:8000' : 'https://globalperks.onrender.com';
+  var K = 'gp_site_content', T = 300000;
+  function inject(c) {
+    document.querySelectorAll('[data-content]').forEach(function(el) {
+      var k = el.getAttribute('data-content');
+      if (c[k] !== undefined && c[k] !== '') { el.textContent = c[k]; el.removeAttribute('data-content'); }
+    });
+    document.querySelectorAll('[data-src]').forEach(function(el) {
+      var k = el.getAttribute('data-src');
+      if (c[k]) { el.src = c[k]; el.removeAttribute('data-src'); }
+    });
+  }
+  try {
+    var s = sessionStorage.getItem(K);
+    if (s) { var o = JSON.parse(s); if (Date.now() - o.ts < T) { inject(o.data); return; } }
+  } catch(e) {}
+  fetch(B + '/api/site-content/').then(function(r){return r.json();}).then(function(d){
+    try { sessionStorage.setItem(K, JSON.stringify({ts:Date.now(),data:d})); } catch(e) {}
+    inject(d);
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>
