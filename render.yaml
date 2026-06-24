@@ -2,6 +2,7 @@ services:
   - type: web
     name: globalperks
     runtime: python
+    plan: starter
     rootDir: backend
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python scripts/init_db.py
     startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2
