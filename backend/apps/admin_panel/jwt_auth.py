@@ -8,7 +8,7 @@ from rest_framework.response import Response
 def generate_token(admin_id: int) -> str:
     now = int(time.time())
     return jwt.encode(
-        {'sub': admin_id, 'iat': now, 'exp': now + 86400},
+        {'sub': str(admin_id), 'iat': now, 'exp': now + 86400},
         settings.SECRET_KEY,
         algorithm='HS256',
     )
