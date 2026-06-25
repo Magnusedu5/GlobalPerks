@@ -46,19 +46,21 @@ const GP = {
 
   _decodePayload(token) {
     try {
-      const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(atob(b64));
+      const part = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      // atob requires base64 to be padded to a multiple of 4
+      const padded = part + '='.repeat((4 - part.length % 4) % 4);
+      return JSON.parse(atob(padded));
     } catch (e) { return null; }
   },
 
   // Call at top of every protected page. Returns token or redirects to login.
   requireAuth() {
     const token = this.getToken();
-    if (!token) { window.location.href = '/admin/login.html'; return null; }
+    if (!token) { window.location.href = '/admin/login'; return null; }
     const payload = this._decodePayload(token);
     if (!payload || (payload.exp && Date.now() / 1000 > payload.exp)) {
       this.clearToken();
-      window.location.href = '/admin/login.html';
+      window.location.href = '/admin/login';
       return null;
     }
     return token;
@@ -83,7 +85,7 @@ const GP = {
 
     if (res.status === 401) {
       this.clearToken();
-      window.location.href = '/admin/login.html';
+      window.location.href = '/admin/login';
       return null;
     }
     return res;
@@ -92,7 +94,7 @@ const GP = {
   async logout() {
     try { await this.fetch('/api/admin/logout/', { method: 'POST' }); } catch (e) {}
     this.clearToken();
-    window.location.href = '/admin/login.html';
+    window.location.href = '/admin/login';
   },
 
   // Call once on page load: checks auth + wires logout button.

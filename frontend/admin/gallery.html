@@ -64,14 +64,14 @@ h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:v
 <nav class="sidebar">
   <div class="s-brand">GlobalPerks</div>
   <div class="s-sub">Admin</div>
-  <a href="/admin/bookings.html" class="nav-link">Bookings</a>
-  <a href="/admin/galleries.html" class="nav-link">Galleries</a>
-  <a href="/admin/cms.html" class="nav-link">Content</a>
+  <a href="/admin/bookings" class="nav-link">Bookings</a>
+  <a href="/admin/galleries" class="nav-link">Galleries</a>
+  <a href="/admin/cms" class="nav-link">Content</a>
   <button id="logout-btn">Logout</button>
 </nav>
 
 <main class="main">
-  <a href="/admin/galleries.html" class="back">← Back to Galleries</a>
+  <a href="/admin/galleries" class="back">← Back to Galleries</a>
   <div id="loading" class="loading">Loading…</div>
   <div id="content" style="display:none">
     <div class="success" id="success"></div>
@@ -111,7 +111,7 @@ h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:v
 GP.init();
 
 const slug = new URLSearchParams(window.location.search).get('slug');
-if (!slug) window.location.href = '/admin/galleries.html';
+if (!slug) window.location.href = '/admin/galleries';
 
 let gallery = null;
 
@@ -125,7 +125,7 @@ async function load() {
   const res = await GP.fetch(`/api/admin/galleries/${slug}/`);
   if (!res) return;
   const data = await res.json();
-  if (!res.ok) { window.location.href = '/admin/galleries.html'; return; }
+  if (!res.ok) { window.location.href = '/admin/galleries'; return; }
   gallery = data.gallery;
   renderInfo(gallery);
   renderPhotos(data.photos || []);
@@ -177,7 +177,7 @@ document.getElementById('delete-btn').addEventListener('click', async () => {
   if (!confirm(`Delete "${gallery.title}" and all its photos? This cannot be undone.`)) return;
   const res = await GP.fetch(`/api/admin/galleries/${slug}/`, {method: 'DELETE'});
   if (!res) return;
-  window.location.href = '/admin/galleries.html';
+  window.location.href = '/admin/galleries';
 });
 
 // File upload

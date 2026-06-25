@@ -1,1 +1,16 @@
+# Gallery viewer (existing)
 /gallery/*  /gallery.html  200
+
+# Public pages — clean URLs
+/portfolio  /portfolio.html  200
+/services   /services.html   200
+/about      /about.html      200
+/contact    /contact.html    200
+
+# Admin pages — clean URLs
+/admin/login      /admin/login.html      200
+/admin/bookings   /admin/bookings.html   200
+/admin/booking    /admin/booking.html    200
+/admin/galleries  /admin/galleries.html  200
+/admin/gallery    /admin/gallery.html    200
+/admin/cms        /admin/cms.html        200

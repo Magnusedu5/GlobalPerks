@@ -52,9 +52,9 @@ tr:hover td{background:#faf8f6;cursor:pointer}
 <nav class="sidebar">
   <div class="s-brand">GlobalPerks</div>
   <div class="s-sub">Admin</div>
-  <a href="/admin/bookings.html" class="nav-link">Bookings</a>
-  <a href="/admin/galleries.html" class="nav-link">Galleries</a>
-  <a href="/admin/cms.html" class="nav-link">Content</a>
+  <a href="/admin/bookings" class="nav-link">Bookings</a>
+  <a href="/admin/galleries" class="nav-link">Galleries</a>
+  <a href="/admin/cms" class="nav-link">Content</a>
   <button id="logout-btn">Logout</button>
 </nav>
 
@@ -125,7 +125,7 @@ async function load(status) {
 
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = bookings.map(b => `
-    <tr onclick="window.location.href='/admin/booking.html?id=${b.id}'">
+    <tr onclick="window.location.href='/admin/booking?id=${b.id}'">
       <td><strong>${b.name}</strong><br><span style="color:#888;font-size:.8rem">${b.email}</span></td>
       <td>${b.service || '—'}</td>
       <td>${fmt(b.preferred_date)}</td>

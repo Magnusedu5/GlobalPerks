@@ -50,14 +50,14 @@ select:focus{border-color:var(--burg)}
 <nav class="sidebar">
   <div class="s-brand">GlobalPerks</div>
   <div class="s-sub">Admin</div>
-  <a href="/admin/bookings.html" class="nav-link">Bookings</a>
-  <a href="/admin/galleries.html" class="nav-link">Galleries</a>
-  <a href="/admin/cms.html" class="nav-link">Content</a>
+  <a href="/admin/bookings" class="nav-link">Bookings</a>
+  <a href="/admin/galleries" class="nav-link">Galleries</a>
+  <a href="/admin/cms" class="nav-link">Content</a>
   <button id="logout-btn">Logout</button>
 </nav>
 
 <main class="main">
-  <a href="/admin/bookings.html" class="back">← Back to Bookings</a>
+  <a href="/admin/bookings" class="back">← Back to Bookings</a>
   <div id="loading" class="loading">Loading…</div>
   <div id="content" style="display:none">
     <h1 id="name"></h1>
@@ -108,7 +108,7 @@ const fmt = d => d ? new Date(d).toLocaleDateString('en-GB',{day:'numeric',month
 const BADGE_CLASS = {pending:'badge-pending',confirmed:'badge-confirmed',declined:'badge-declined',completed:'badge-completed',archived:'badge-archived'};
 
 const id = new URLSearchParams(window.location.search).get('id');
-if (!id) window.location.href = '/admin/bookings.html';
+if (!id) window.location.href = '/admin/bookings';
 
 async function load() {
   const res = await GP.fetch(`/api/admin/bookings/${id}/`);

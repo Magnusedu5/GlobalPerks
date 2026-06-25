@@ -57,9 +57,9 @@ h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:v
 <nav class="sidebar">
   <div class="s-brand">GlobalPerks</div>
   <div class="s-sub">Admin</div>
-  <a href="/admin/bookings.html" class="nav-link">Bookings</a>
-  <a href="/admin/galleries.html" class="nav-link">Galleries</a>
-  <a href="/admin/cms.html" class="nav-link">Content</a>
+  <a href="/admin/bookings" class="nav-link">Bookings</a>
+  <a href="/admin/galleries" class="nav-link">Galleries</a>
+  <a href="/admin/cms" class="nav-link">Content</a>
   <button id="logout-btn">Logout</button>
 </nav>
 
@@ -110,7 +110,7 @@ async function load() {
   document.getElementById('loading').style.display = 'none';
   if (!galleries.length) { document.getElementById('empty').style.display = 'block'; return; }
   document.getElementById('grid').innerHTML = galleries.map(g => `
-    <div class="gallery-card" onclick="window.location.href='/admin/gallery.html?slug=${g.slug}'">
+    <div class="gallery-card" onclick="window.location.href='/admin/gallery?slug=${g.slug}'">
       ${g.cover_url
         ? `<img class="cover" src="${g.cover_url}" alt="">`
         : `<div class="cover-placeholder">No photos yet</div>`}
@@ -152,7 +152,7 @@ document.getElementById('create-btn').addEventListener('click', async () => {
   const data = await res.json();
   if (res.ok) {
     modal.classList.remove('open');
-    window.location.href = `/admin/gallery.html?slug=${data.gallery.slug}`;
+    window.location.href = `/admin/gallery?slug=${data.gallery.slug}`;
   } else {
     const errors = data.errors || {};
     if (errors.title) document.getElementById('e-title').textContent = errors.title;
