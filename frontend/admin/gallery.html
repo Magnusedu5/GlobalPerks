@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery — GlobalPerks Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--burg:#7A2E2E;--terra:#C4753A;--caramel:#D4A574;--bg:#120A06;--sidebar:#1a0f0a;--mid:#5a5a5a;--border:#e5e0db}
+body{font-family:'Lato',sans-serif;display:flex;min-height:100vh;background:#f7f4f1;color:#1a1a1a}
+.sidebar{width:220px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;padding:32px 0;position:sticky;top:0;height:100vh}
+.s-brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#e8d5b7;text-align:center;padding:0 20px 4px}
+.s-sub{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#7a6a5a;text-align:center;padding-bottom:32px}
+.nav-link{display:block;padding:12px 24px;color:#c4b49a;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .2s}
+.nav-link:hover,.nav-link.active{color:#e8d5b7;background:rgba(255,255,255,.05);border-left:3px solid var(--caramel)}
+.nav-link:not(.active){border-left:3px solid transparent}
+#logout-btn{margin-top:auto;display:block;padding:12px 24px;color:#7a6a5a;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;background:none;border:none;cursor:pointer;text-align:left;width:100%;transition:color .2s}
+#logout-btn:hover{color:#c4b49a}
+.main{flex:1;padding:40px;overflow-y:auto}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--mid);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;margin-bottom:28px;transition:color .2s}
+.back:hover{color:var(--burg)}
+.top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:var(--bg)}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{padding:9px 18px;border-radius:3px;font-family:'Lato',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .2s;border:none}
+.btn-primary{background:var(--burg);color:#fff}
+.btn-primary:hover{background:#5e2222}
+.btn-secondary{background:none;border:1px solid var(--border);color:var(--mid)}
+.btn-secondary:hover{border-color:var(--burg);color:var(--burg)}
+.btn-danger{background:none;border:1px solid #fecaca;color:#991b1b}
+.btn-danger:hover{background:#fee2e2}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.pill{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.pill-active{background:#d1fae5;color:#065f46}
+.pill-inactive{background:#fee2e2;color:#991b1b}
+.meta{font-size:.85rem;color:var(--mid);margin-bottom:6px}
+.gallery-link{font-size:.8rem;color:var(--burg);text-decoration:none}
+.gallery-link:hover{text-decoration:underline}
+.success{background:#d1fae5;border:1px solid #6ee7b7;color:#065f46;padding:10px 14px;border-radius:3px;font-size:.875rem;margin-bottom:20px;display:none}
+/* Upload zone */
+.upload-card{background:#fff;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:24px 28px;margin:24px 0}
+.upload-card h2{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--burg);margin-bottom:16px}
+.drop-zone{border:2px dashed var(--border);border-radius:4px;padding:36px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--caramel);background:#fffbf7}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop-label{font-size:.85rem;color:var(--mid)}
+.drop-label strong{color:var(--burg)}
+.upload-progress{margin-top:12px;font-size:.85rem;color:var(--mid);display:none}
+/* Photo grid */
+.photos-card{background:#fff;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:24px 28px}
+.photos-card h2{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--burg);margin-bottom:16px}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.photo-item{position:relative;border-radius:3px;overflow:hidden;aspect-ratio:1}
+.photo-item img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:2px;width:24px;height:24px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
+.photo-item:hover .photo-del{opacity:1}
+.no-photos{color:var(--mid);font-size:.875rem;padding:16px 0}
+.loading{padding:48px;text-align:center;color:var(--mid)}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="s-brand">GlobalPerks</div>
+  <div class="s-sub">Admin</div>
+  <a href="/admin/bookings.html" class="nav-link">Bookings</a>
+  <a href="/admin/galleries.html" class="nav-link">Galleries</a>
+  <a href="/admin/cms.html" class="nav-link">Content</a>
+  <button id="logout-btn">Logout</button>
+</nav>
+
+<main class="main">
+  <a href="/admin/galleries.html" class="back">← Back to Galleries</a>
+  <div id="loading" class="loading">Loading…</div>
+  <div id="content" style="display:none">
+    <div class="success" id="success"></div>
+    <div class="top">
+      <div>
+        <h1 id="title"></h1>
+        <div class="meta" id="meta"></div>
+        <a id="live-link" class="gallery-link" target="_blank"></a>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" id="toggle-btn"></button>
+        <button class="btn btn-danger" id="delete-btn">Delete Gallery</button>
+      </div>
+    </div>
+
+    <div class="upload-card">
+      <h2>Upload Photos</h2>
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" multiple accept=".jpg,.jpeg,.png,.webp">
+        <div class="drop-label">Drop photos here or <strong>browse</strong><br>
+          <small>JPG, PNG, WEBP — multiple allowed</small></div>
+      </div>
+      <div class="upload-progress" id="upload-progress"></div>
+    </div>
+
+    <div class="photos-card">
+      <h2>Photos (<span id="photo-count">0</span>)</h2>
+      <div class="photo-grid" id="photo-grid"></div>
+      <div class="no-photos" id="no-photos" style="display:none">No photos uploaded yet.</div>
+    </div>
+  </div>
+</main>
+
+<script src="../config.js"></script>
+<script src="admin.js"></script>
+<script>
+GP.init();
+
+const slug = new URLSearchParams(window.location.search).get('slug');
+if (!slug) window.location.href = '/admin/galleries.html';
+
+let gallery = null;
+
+function showSuccess(msg) {
+  const el = document.getElementById('success');
+  el.textContent = msg; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+async function load() {
+  const res = await GP.fetch(`/api/admin/galleries/${slug}/`);
+  if (!res) return;
+  const data = await res.json();
+  if (!res.ok) { window.location.href = '/admin/galleries.html'; return; }
+  gallery = data.gallery;
+  renderInfo(gallery);
+  renderPhotos(data.photos || []);
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+}
+
+function renderInfo(g) {
+  document.title = `${g.title} — Admin`;
+  document.getElementById('title').textContent = g.title;
+  document.getElementById('meta').textContent =
+    `${g.client_name}${g.client_email ? ' · ' + g.client_email : ''}${g.shoot_date ? ' · ' + g.shoot_date : ''}`;
+  const link = document.getElementById('live-link');
+  const base = window.GP_BACKEND.replace('/api','').replace('api.','');
+  link.href = `${base}/gallery/${g.slug}`;
+  link.textContent = `View live gallery ↗`;
+  const toggleBtn = document.getElementById('toggle-btn');
+  toggleBtn.textContent = g.is_active ? 'Set Inactive' : 'Set Active';
+  toggleBtn.className = `btn ${g.is_active ? 'btn-secondary' : 'btn-primary'}`;
+}
+
+function renderPhotos(photos) {
+  document.getElementById('photo-count').textContent = photos.length;
+  const grid = document.getElementById('photo-grid');
+  if (!photos.length) {
+    grid.innerHTML = '';
+    document.getElementById('no-photos').style.display = 'block';
+    return;
+  }
+  document.getElementById('no-photos').style.display = 'none';
+  grid.innerHTML = photos.map(p => `
+    <div class="photo-item" data-id="${p.id}">
+      <img src="${p.url}" alt="">
+      <button class="photo-del" title="Delete" onclick="deletePhoto(${p.id})">✕</button>
+    </div>`).join('');
+}
+
+document.getElementById('toggle-btn').addEventListener('click', async () => {
+  const res = await GP.fetch(`/api/admin/galleries/${slug}/`, {
+    method: 'PATCH',
+    body: JSON.stringify({action: 'toggle_active'}),
+  });
+  if (!res) return;
+  const data = await res.json();
+  if (data.gallery) { gallery = data.gallery; renderInfo(gallery); showSuccess('Status updated.'); }
+});
+
+document.getElementById('delete-btn').addEventListener('click', async () => {
+  if (!confirm(`Delete "${gallery.title}" and all its photos? This cannot be undone.`)) return;
+  const res = await GP.fetch(`/api/admin/galleries/${slug}/`, {method: 'DELETE'});
+  if (!res) return;
+  window.location.href = '/admin/galleries.html';
+});
+
+// File upload
+const fileInput = document.getElementById('file-input');
+const dropZone = document.getElementById('drop-zone');
+const progress = document.getElementById('upload-progress');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag');
+  uploadFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener('change', () => uploadFiles(fileInput.files));
+
+async function uploadFiles(files) {
+  if (!files.length) return;
+  progress.textContent = `Uploading ${files.length} file${files.length > 1 ? 's' : ''}…`;
+  progress.style.display = 'block';
+  const fd = new FormData();
+  Array.from(files).forEach(f => fd.append('photos', f));
+  const res = await GP.fetch(`/api/admin/galleries/${slug}/photos/`, {method: 'POST', body: fd});
+  progress.style.display = 'none';
+  fileInput.value = '';
+  if (!res) return;
+  const data = await res.json();
+  if (data.photos) { renderPhotos(data.photos); showSuccess(`${data.added} photo${data.added !== 1 ? 's' : ''} uploaded.`); }
+}
+
+async function deletePhoto(photoId) {
+  if (!confirm('Delete this photo?')) return;
+  const res = await GP.fetch(`/api/admin/galleries/${slug}/photos/${photoId}/`, {method: 'DELETE'});
+  if (!res) return;
+  document.querySelector(`.photo-item[data-id="${photoId}"]`)?.remove();
+  const count = document.querySelectorAll('.photo-item').length;
+  document.getElementById('photo-count').textContent = count;
+  if (!count) document.getElementById('no-photos').style.display = 'block';
+}
+
+load();
+</script>
+</body>
+</html>

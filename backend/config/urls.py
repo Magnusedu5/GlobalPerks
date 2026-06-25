@@ -20,6 +20,7 @@ def gallery_page(request, slug):
 
 urlpatterns = [
     path('health/', health, name='health'),
+    path('api/admin/', include('apps.admin_panel.admin_api_urls')),
     path('api/', include('apps.bookings.urls')),
     path('admin-panel/', include('apps.admin_panel.urls')),
     path('gallery-api/', include('apps.gallery.urls')),

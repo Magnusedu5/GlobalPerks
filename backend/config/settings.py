@@ -90,8 +90,8 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
 ).split(',')
 
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
-CORS_ALLOW_METHODS = ['GET', 'POST', 'OPTIONS']
-CORS_ALLOW_HEADERS = ['Content-Type', 'Accept']
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS']
+CORS_ALLOW_HEADERS = ['Content-Type', 'Accept', 'Authorization']
 CORS_ALLOW_CREDENTIALS = True
 
 STATIC_URL = '/static/'

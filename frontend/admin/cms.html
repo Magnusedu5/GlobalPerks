@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content — GlobalPerks Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--burg:#7A2E2E;--terra:#C4753A;--caramel:#D4A574;--bg:#120A06;--sidebar:#1a0f0a;--mid:#5a5a5a;--border:#e5e0db}
+body{font-family:'Lato',sans-serif;display:flex;min-height:100vh;background:#f7f4f1;color:#1a1a1a}
+/* Nav sidebar */
+.sidebar{width:220px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;padding:32px 0;position:sticky;top:0;height:100vh}
+.s-brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#e8d5b7;text-align:center;padding:0 20px 4px}
+.s-sub{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#7a6a5a;text-align:center;padding-bottom:32px}
+.nav-link{display:block;padding:12px 24px;color:#c4b49a;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .2s}
+.nav-link:hover,.nav-link.active{color:#e8d5b7;background:rgba(255,255,255,.05);border-left:3px solid var(--caramel)}
+.nav-link:not(.active){border-left:3px solid transparent}
+#logout-btn{margin-top:auto;display:block;padding:12px 24px;color:#7a6a5a;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;background:none;border:none;cursor:pointer;text-align:left;width:100%;transition:color .2s}
+#logout-btn:hover{color:#c4b49a}
+/* CMS layout: sections sidebar + content */
+.cms-wrap{flex:1;display:flex;overflow:hidden}
+.cms-sidebar{width:220px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);position:sticky;top:0;height:100vh;overflow-y:auto;padding:24px 0}
+.cms-sidebar h3{font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);padding:0 20px 12px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.section-link{display:block;padding:9px 20px;font-size:.78rem;color:var(--mid);text-decoration:none;border-left:3px solid transparent;transition:all .15s;cursor:pointer;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;text-align:left;font-family:'Lato',sans-serif}
+.section-link:hover{color:var(--burg);background:#faf7f4}
+.section-link.active{color:var(--burg);border-left-color:var(--caramel);background:#faf7f4}
+/* Content area */
+.cms-content{flex:1;padding:40px;overflow-y:auto;max-width:860px}
+h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:var(--bg);margin-bottom:32px}
+/* Section card */
+.section-card{background:#fff;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:28px 32px;margin-bottom:24px;scroll-margin-top:24px}
+.section-card h2{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--burg);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+/* Image field */
+.img-field{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.img-field:last-of-type{border-bottom:none}
+.img-preview{width:80px;height:60px;object-fit:cover;border-radius:3px;flex-shrink:0;background:#ede8e0;border:1px solid var(--border)}
+.img-preview-empty{width:80px;height:60px;background:#ede8e0;border-radius:3px;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:#b8a898}
+.img-info{flex:1}
+.img-label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:6px}
+.img-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.upload-btn{padding:6px 14px;background:var(--burg);color:#fff;border:none;border-radius:3px;font-family:'Lato',sans-serif;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.upload-btn:hover{background:#5e2222}
+.upload-btn:disabled{opacity:.6;cursor:not-allowed}
+.remove-btn{padding:6px 14px;background:none;border:1px solid #fecaca;color:#991b1b;border-radius:3px;font-family:'Lato',sans-serif;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.remove-btn:hover{background:#fee2e2}
+.img-status{font-size:.75rem;color:var(--mid)}
+/* Text field */
+.text-field{margin-bottom:14px}
+.text-field label{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:5px}
+.text-field input,.text-field textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:3px;font-family:'Lato',sans-serif;font-size:.875rem;outline:none;resize:vertical;transition:border-color .2s}
+.text-field input:focus,.text-field textarea:focus{border-color:var(--burg)}
+.save-row{display:flex;align-items:center;gap:16px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.save-btn{padding:9px 22px;background:var(--burg);color:#fff;border:none;border-radius:3px;font-family:'Lato',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.save-btn:hover{background:#5e2222}
+.save-btn:disabled{opacity:.6;cursor:not-allowed}
+.saved-msg{font-size:.8rem;color:#065f46;display:none}
+.loading,.no-content{text-align:center;padding:60px;color:var(--mid)}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="s-brand">GlobalPerks</div>
+  <div class="s-sub">Admin</div>
+  <a href="/admin/bookings.html" class="nav-link">Bookings</a>
+  <a href="/admin/galleries.html" class="nav-link">Galleries</a>
+  <a href="/admin/cms.html" class="nav-link active">Content</a>
+  <button id="logout-btn">Logout</button>
+</nav>
+
+<div class="cms-wrap">
+  <!-- Sections sidebar -->
+  <div class="cms-sidebar">
+    <h3>Sections</h3>
+    <div id="section-nav"></div>
+  </div>
+
+  <!-- Content area -->
+  <div class="cms-content" id="cms-content">
+    <h1>Content Editor</h1>
+    <div class="loading" id="loading">Loading…</div>
+    <div id="sections-container"></div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="admin.js"></script>
+<script>
+GP.init();
+
+async function load() {
+  const res = await GP.fetch('/api/admin/cms/');
+  if (!res) return;
+  const {sections} = await res.json();
+  document.getElementById('loading').style.display = 'none';
+  renderSections(sections);
+  setupScrollSpy(sections);
+}
+
+function renderSections(sections) {
+  const nav = document.getElementById('section-nav');
+  const container = document.getElementById('sections-container');
+
+  sections.forEach(section => {
+    // Sidebar link
+    const link = document.createElement('button');
+    link.className = 'section-link';
+    link.textContent = section.label;
+    link.dataset.section = section.key;
+    link.addEventListener('click', () => {
+      document.getElementById('sec-' + section.key)?.scrollIntoView({behavior:'smooth'});
+    });
+    nav.appendChild(link);
+
+    // Section card
+    const card = document.createElement('div');
+    card.className = 'section-card';
+    card.id = 'sec-' + section.key;
+
+    const h2 = document.createElement('h2');
+    h2.textContent = section.label;
+    card.appendChild(h2);
+
+    const imageItems = section.items.filter(i => i.type === 'image');
+    const textItems  = section.items.filter(i => i.type === 'text');
+
+    // Image fields (each has its own upload form)
+    imageItems.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'img-field';
+      const hasImg = item.preview_url;
+      div.innerHTML = `
+        ${hasImg
+          ? `<img class="img-preview" id="prev-${item.key}" src="${item.preview_url}" alt="">`
+          : `<div class="img-preview-empty" id="prev-${item.key}">No image</div>`}
+        <div class="img-info">
+          <div class="img-label">${item.label}</div>
+          <div class="img-actions">
+            <button class="upload-btn" id="ubtn-${item.key}" onclick="triggerUpload('${item.key}')">Upload</button>
+            <input type="file" id="ufile-${item.key}" accept=".jpg,.jpeg,.png,.webp" style="display:none"
+              onchange="doUpload('${item.key}')">
+            ${hasImg ? `<button class="remove-btn" onclick="removeImage('${item.key}')">Remove</button>` : ''}
+            <span class="img-status" id="ustat-${item.key}"></span>
+          </div>
+        </div>`;
+      card.appendChild(div);
+    });
+
+    // Text fields + save button
+    if (textItems.length) {
+      const form = document.createElement('div');
+      form.id = 'form-' + section.key;
+      textItems.forEach(item => {
+        const fd = document.createElement('div');
+        fd.className = 'text-field';
+        const long = item.value && item.value.length > 80;
+        fd.innerHTML = `
+          <label>${item.label}</label>
+          ${long
+            ? `<textarea id="tf-${item.key}" rows="3">${escHtml(item.value)}</textarea>`
+            : `<input id="tf-${item.key}" type="text" value="${escAttr(item.value)}">`}`;
+        form.appendChild(fd);
+      });
+      const saveRow = document.createElement('div');
+      saveRow.className = 'save-row';
+      saveRow.innerHTML = `
+        <button class="save-btn" onclick="saveText('${section.key}')">Save Section</button>
+        <span class="saved-msg" id="saved-${section.key}">✓ Saved</span>`;
+      form.appendChild(saveRow);
+      card.appendChild(form);
+    }
+
+    container.appendChild(card);
+  });
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return String(s).replace(/"/g,'&quot;'); }
+
+async function saveText(sectionKey) {
+  const btn = document.querySelector(`#sec-${sectionKey} .save-btn`);
+  const msg = document.getElementById('saved-' + sectionKey);
+  btn.disabled = true; btn.textContent = 'Saving…'; msg.style.display = 'none';
+
+  const updates = {};
+  document.querySelectorAll(`#form-${sectionKey} [id^="tf-"]`).forEach(el => {
+    updates[el.id.replace('tf-', '')] = el.value;
+  });
+
+  const res = await GP.fetch('/api/admin/cms/text/', {
+    method: 'POST',
+    body: JSON.stringify({updates}),
+  });
+  btn.disabled = false; btn.textContent = 'Save Section';
+  if (res && res.ok) {
+    msg.style.display = 'inline';
+    setTimeout(() => msg.style.display = 'none', 2500);
+  }
+}
+
+function triggerUpload(key) {
+  document.getElementById('ufile-' + key).click();
+}
+
+async function doUpload(key) {
+  const file = document.getElementById('ufile-' + key).files[0];
+  if (!file) return;
+  const stat = document.getElementById('ustat-' + key);
+  const btn  = document.getElementById('ubtn-' + key);
+  btn.disabled = true; stat.textContent = 'Uploading…';
+
+  const fd = new FormData();
+  fd.append('key', key);
+  fd.append('image', file);
+
+  const res = await GP.fetch('/api/admin/cms/image/', {method: 'POST', body: fd});
+  btn.disabled = false;
+  if (!res) return;
+  const data = await res.json();
+  if (data.url) {
+    stat.textContent = '✓ Uploaded';
+    // Update preview
+    const prev = document.getElementById('prev-' + key);
+    if (prev.tagName === 'IMG') {
+      prev.src = data.url;
+    } else {
+      const img = document.createElement('img');
+      img.className = 'img-preview';
+      img.id = 'prev-' + key;
+      img.src = data.url;
+      prev.replaceWith(img);
+    }
+    setTimeout(() => stat.textContent = '', 2500);
+  } else {
+    stat.textContent = 'Upload failed.';
+  }
+}
+
+async function removeImage(key) {
+  if (!confirm('Remove this image?')) return;
+  const res = await GP.fetch(`/api/admin/cms/image/${key}/`, {method: 'DELETE'});
+  if (!res) return;
+  const prev = document.getElementById('prev-' + key);
+  if (prev) {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'img-preview-empty';
+    placeholder.id = 'prev-' + key;
+    placeholder.textContent = 'No image';
+    prev.replaceWith(placeholder);
+  }
+}
+
+function setupScrollSpy(sections) {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const key = e.target.id.replace('sec-', '');
+        document.querySelectorAll('.section-link').forEach(l =>
+          l.classList.toggle('active', l.dataset.section === key));
+      }
+    });
+  }, {threshold: 0.2});
+
+  sections.forEach(s => {
+    const el = document.getElementById('sec-' + s.key);
+    if (el) observer.observe(el);
+  });
+}
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Detail — GlobalPerks Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--burg:#7A2E2E;--terra:#C4753A;--caramel:#D4A574;--bg:#120A06;--sidebar:#1a0f0a;--mid:#5a5a5a;--border:#e5e0db}
+body{font-family:'Lato',sans-serif;display:flex;min-height:100vh;background:#f7f4f1;color:#1a1a1a}
+.sidebar{width:220px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;padding:32px 0;position:sticky;top:0;height:100vh}
+.s-brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#e8d5b7;text-align:center;padding:0 20px 4px}
+.s-sub{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#7a6a5a;text-align:center;padding-bottom:32px}
+.nav-link{display:block;padding:12px 24px;color:#c4b49a;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .2s}
+.nav-link:hover,.nav-link.active{color:#e8d5b7;background:rgba(255,255,255,.05);border-left:3px solid var(--caramel)}
+.nav-link:not(.active){border-left:3px solid transparent}
+#logout-btn{margin-top:auto;display:block;padding:12px 24px;color:#7a6a5a;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;background:none;border:none;cursor:pointer;text-align:left;width:100%;transition:color .2s}
+#logout-btn:hover{color:#c4b49a}
+.main{flex:1;padding:40px;max-width:760px}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--mid);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;margin-bottom:28px;transition:color .2s}
+.back:hover{color:var(--burg)}
+h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;margin-bottom:8px;color:var(--bg)}
+.badge{display:inline-block;padding:4px 12px;border-radius:12px;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:28px}
+.badge-pending{background:#fef3c7;color:#92400e}
+.badge-confirmed{background:#d1fae5;color:#065f46}
+.badge-declined{background:#fee2e2;color:#991b1b}
+.badge-completed{background:#dbeafe;color:#1e40af}
+.badge-archived{background:#f3f4f6;color:#6b7280}
+.card{background:#fff;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:28px 32px;margin-bottom:20px}
+.card h2{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--burg);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.row{display:grid;grid-template-columns:160px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid #f0ece8}
+.row:last-child{border-bottom:none}
+.label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);padding-top:2px}
+.val{font-size:.9rem}
+.message-text{white-space:pre-wrap;font-size:.875rem;color:#333;line-height:1.6}
+/* Status update */
+.status-form{display:flex;gap:12px;align-items:center}
+select{padding:9px 12px;border:1px solid var(--border);border-radius:3px;font-family:'Lato',sans-serif;font-size:.875rem;outline:none;background:#fff;transition:border-color .2s}
+select:focus{border-color:var(--burg)}
+.btn{padding:9px 22px;background:var(--burg);color:#fff;border:none;border-radius:3px;font-family:'Lato',sans-serif;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.btn:hover{background:#5e2222}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.success{background:#d1fae5;border:1px solid #6ee7b7;color:#065f46;padding:10px 14px;border-radius:3px;font-size:.875rem;margin-top:12px;display:none}
+.loading{padding:48px;text-align:center;color:var(--mid)}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="s-brand">GlobalPerks</div>
+  <div class="s-sub">Admin</div>
+  <a href="/admin/bookings.html" class="nav-link">Bookings</a>
+  <a href="/admin/galleries.html" class="nav-link">Galleries</a>
+  <a href="/admin/cms.html" class="nav-link">Content</a>
+  <button id="logout-btn">Logout</button>
+</nav>
+
+<main class="main">
+  <a href="/admin/bookings.html" class="back">← Back to Bookings</a>
+  <div id="loading" class="loading">Loading…</div>
+  <div id="content" style="display:none">
+    <h1 id="name"></h1>
+    <span class="badge" id="badge"></span>
+
+    <div class="card">
+      <h2>Contact</h2>
+      <div class="row"><span class="label">Email</span><span class="val" id="email"></span></div>
+      <div class="row"><span class="label">Phone</span><span class="val" id="phone"></span></div>
+    </div>
+
+    <div class="card">
+      <h2>Booking Details</h2>
+      <div class="row"><span class="label">Service</span><span class="val" id="service"></span></div>
+      <div class="row"><span class="label">Preferred Date</span><span class="val" id="pdate"></span></div>
+      <div class="row"><span class="label">Submitted</span><span class="val" id="created"></span></div>
+      <div class="row"><span class="label">Calendar Event</span><span class="val" id="cal"></span></div>
+    </div>
+
+    <div class="card" id="msg-card" style="display:none">
+      <h2>Message</h2>
+      <p class="message-text" id="message"></p>
+    </div>
+
+    <div class="card">
+      <h2>Update Status</h2>
+      <div class="status-form">
+        <select id="status-select">
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="declined">Declined</option>
+          <option value="completed">Completed</option>
+          <option value="archived">Archived</option>
+        </select>
+        <button class="btn" id="save-btn">Save</button>
+      </div>
+      <div class="success" id="success">Status updated successfully.</div>
+    </div>
+  </div>
+</main>
+
+<script src="../config.js"></script>
+<script src="admin.js"></script>
+<script>
+GP.init();
+
+const fmt = d => d ? new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
+const BADGE_CLASS = {pending:'badge-pending',confirmed:'badge-confirmed',declined:'badge-declined',completed:'badge-completed',archived:'badge-archived'};
+
+const id = new URLSearchParams(window.location.search).get('id');
+if (!id) window.location.href = '/admin/bookings.html';
+
+async function load() {
+  const res = await GP.fetch(`/api/admin/bookings/${id}/`);
+  if (!res) return;
+  const {booking} = await res.json();
+  render(booking);
+}
+
+function render(b) {
+  document.getElementById('name').textContent = b.name;
+  const badge = document.getElementById('badge');
+  badge.textContent = b.status;
+  badge.className = 'badge ' + (BADGE_CLASS[b.status] || '');
+  document.getElementById('email').textContent = b.email;
+  document.getElementById('phone').textContent = b.phone || '—';
+  document.getElementById('service').textContent = b.service || '—';
+  document.getElementById('pdate').textContent = fmt(b.preferred_date);
+  document.getElementById('created').textContent = fmt(b.created_at);
+  document.getElementById('cal').textContent = b.google_calendar_event_id || 'Not synced';
+  if (b.message) {
+    document.getElementById('message').textContent = b.message;
+    document.getElementById('msg-card').style.display = 'block';
+  }
+  document.getElementById('status-select').value = b.status || 'pending';
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+}
+
+document.getElementById('save-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('save-btn');
+  const success = document.getElementById('success');
+  btn.disabled = true; btn.textContent = 'Saving…'; success.style.display = 'none';
+  const res = await GP.fetch(`/api/admin/bookings/${id}/`, {
+    method: 'PATCH',
+    body: JSON.stringify({status: document.getElementById('status-select').value}),
+  });
+  if (!res) return;
+  const data = await res.json();
+  if (data.booking) {
+    render(data.booking);
+    success.style.display = 'block';
+    setTimeout(() => success.style.display = 'none', 3000);
+  }
+  btn.disabled = false; btn.textContent = 'Save';
+});
+
+load();
+</script>
+</body>
+</html>

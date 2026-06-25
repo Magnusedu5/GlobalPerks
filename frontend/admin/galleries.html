@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galleries — GlobalPerks Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--burg:#7A2E2E;--terra:#C4753A;--caramel:#D4A574;--bg:#120A06;--sidebar:#1a0f0a;--mid:#5a5a5a;--border:#e5e0db}
+body{font-family:'Lato',sans-serif;display:flex;min-height:100vh;background:#f7f4f1;color:#1a1a1a}
+.sidebar{width:220px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;padding:32px 0;position:sticky;top:0;height:100vh}
+.s-brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#e8d5b7;text-align:center;padding:0 20px 4px}
+.s-sub{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#7a6a5a;text-align:center;padding-bottom:32px}
+.nav-link{display:block;padding:12px 24px;color:#c4b49a;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .2s}
+.nav-link:hover,.nav-link.active{color:#e8d5b7;background:rgba(255,255,255,.05);border-left:3px solid var(--caramel)}
+.nav-link:not(.active){border-left:3px solid transparent}
+#logout-btn{margin-top:auto;display:block;padding:12px 24px;color:#7a6a5a;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;background:none;border:none;cursor:pointer;text-align:left;width:100%;transition:color .2s}
+#logout-btn:hover{color:#c4b49a}
+.main{flex:1;padding:40px;overflow-y:auto}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:var(--bg)}
+.btn-primary{padding:10px 22px;background:var(--burg);color:#fff;border:none;border-radius:3px;font-family:'Lato',sans-serif;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.btn-primary:hover{background:#5e2222}
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.gallery-card{background:#fff;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.07);overflow:hidden;cursor:pointer;transition:box-shadow .2s}
+.gallery-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.cover{width:100%;height:160px;object-fit:cover;background:#ede8e0;display:block}
+.cover-placeholder{width:100%;height:160px;background:#ede8e0;display:flex;align-items:center;justify-content:center;color:#b8a898;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
+.card-body{padding:16px 18px}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;margin-bottom:4px}
+.card-client{font-size:.8rem;color:var(--mid);margin-bottom:10px}
+.card-meta{display:flex;justify-content:space-between;font-size:.75rem;color:var(--mid)}
+.pill{padding:2px 8px;border-radius:10px;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.pill-active{background:#d1fae5;color:#065f46}
+.pill-inactive{background:#fee2e2;color:#991b1b}
+.loading,.empty{text-align:center;padding:60px;color:var(--mid)}
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:100}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:4px;padding:36px 32px;width:100%;max-width:480px;box-shadow:0 16px 48px rgba(0,0,0,.3)}
+.modal h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--burg);margin-bottom:24px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:5px}
+.field input,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:3px;font-family:'Lato',sans-serif;font-size:.875rem;outline:none;transition:border-color .2s}
+.field input:focus,.field textarea:focus{border-color:var(--burg)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px}
+.btn-ghost{padding:9px 20px;background:none;border:1px solid var(--border);border-radius:3px;font-family:'Lato',sans-serif;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:var(--mid)}
+.btn-ghost:hover{border-color:var(--burg);color:var(--burg)}
+.field-error{color:#b91c1c;font-size:.78rem;margin-top:4px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="s-brand">GlobalPerks</div>
+  <div class="s-sub">Admin</div>
+  <a href="/admin/bookings.html" class="nav-link">Bookings</a>
+  <a href="/admin/galleries.html" class="nav-link">Galleries</a>
+  <a href="/admin/cms.html" class="nav-link">Content</a>
+  <button id="logout-btn">Logout</button>
+</nav>
+
+<main class="main">
+  <div class="top">
+    <h1>Galleries</h1>
+    <button class="btn-primary" id="new-btn">+ New Gallery</button>
+  </div>
+  <div class="loading" id="loading">Loading…</div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">No galleries yet.</div>
+</main>
+
+<!-- Create modal -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <h2>New Gallery</h2>
+    <div class="two-col">
+      <div class="field"><label>Title *</label><input id="f-title" placeholder="Wedding — Ada & Chidi"><div class="field-error" id="e-title"></div></div>
+      <div class="field"><label>Slug (optional)</label><input id="f-slug" placeholder="auto-generated"></div>
+    </div>
+    <div class="two-col">
+      <div class="field"><label>Client Name *</label><input id="f-client"><div class="field-error" id="e-client"></div></div>
+      <div class="field"><label>Client Email</label><input id="f-email" type="email"></div>
+    </div>
+    <div class="two-col">
+      <div class="field"><label>Access Password *</label><input id="f-pw" type="password" placeholder="min 4 chars"><div class="field-error" id="e-pw"></div></div>
+      <div class="field"><label>Shoot Date</label><input id="f-date" type="date"></div>
+    </div>
+    <div class="field"><label>Description</label><textarea id="f-desc" rows="2"></textarea></div>
+    <div id="e-slug" class="field-error" style="margin-bottom:8px"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancel-btn">Cancel</button>
+      <button class="btn-primary" id="create-btn">Create Gallery</button>
+    </div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="admin.js"></script>
+<script>
+GP.init();
+
+async function load() {
+  const res = await GP.fetch('/api/admin/galleries/');
+  if (!res) return;
+  const {galleries} = await res.json();
+  document.getElementById('loading').style.display = 'none';
+  if (!galleries.length) { document.getElementById('empty').style.display = 'block'; return; }
+  document.getElementById('grid').innerHTML = galleries.map(g => `
+    <div class="gallery-card" onclick="window.location.href='/admin/gallery.html?slug=${g.slug}'">
+      ${g.cover_url
+        ? `<img class="cover" src="${g.cover_url}" alt="">`
+        : `<div class="cover-placeholder">No photos yet</div>`}
+      <div class="card-body">
+        <div class="card-title">${g.title}</div>
+        <div class="card-client">${g.client_name}${g.client_email ? ' · ' + g.client_email : ''}</div>
+        <div class="card-meta">
+          <span>${g.photo_count} photo${g.photo_count !== 1 ? 's' : ''}</span>
+          <span class="pill ${g.is_active ? 'pill-active' : 'pill-inactive'}">${g.is_active ? 'Active' : 'Inactive'}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// Modal
+const modal = document.getElementById('modal');
+document.getElementById('new-btn').addEventListener('click', () => modal.classList.add('open'));
+document.getElementById('cancel-btn').addEventListener('click', () => modal.classList.remove('open'));
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+document.getElementById('create-btn').addEventListener('click', async () => {
+  ['e-title','e-client','e-pw','e-slug'].forEach(id => document.getElementById(id).textContent = '');
+  const btn = document.getElementById('create-btn');
+  btn.disabled = true; btn.textContent = 'Creating…';
+
+  const res = await GP.fetch('/api/admin/galleries/', {
+    method: 'POST',
+    body: JSON.stringify({
+      title: document.getElementById('f-title').value,
+      slug: document.getElementById('f-slug').value,
+      client_name: document.getElementById('f-client').value,
+      client_email: document.getElementById('f-email').value,
+      password: document.getElementById('f-pw').value,
+      shoot_date: document.getElementById('f-date').value,
+      description: document.getElementById('f-desc').value,
+    }),
+  });
+  if (!res) return;
+  const data = await res.json();
+  if (res.ok) {
+    modal.classList.remove('open');
+    window.location.href = `/admin/gallery.html?slug=${data.gallery.slug}`;
+  } else {
+    const errors = data.errors || {};
+    if (errors.title) document.getElementById('e-title').textContent = errors.title;
+    if (errors.client_name) document.getElementById('e-client').textContent = errors.client_name;
+    if (errors.password) document.getElementById('e-pw').textContent = errors.password;
+    if (errors.slug) document.getElementById('e-slug').textContent = errors.slug;
+    btn.disabled = false; btn.textContent = 'Create Gallery';
+  }
+});
+
+load();
+</script>
+</body>
+</html>

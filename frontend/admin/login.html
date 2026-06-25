@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — GlobalPerks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--burg:#7A2E2E;--terra:#C4753A;--mid:#5a5a5a;--bg:#120A06}
+body{font-family:'Lato',sans-serif;background:var(--bg);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{background:#fff;border-radius:4px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,.45)}
+.brand{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--burg);text-align:center;margin-bottom:4px}
+.sub{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);text-align:center;margin-bottom:36px}
+label{display:block;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);margin-bottom:6px}
+input{width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:3px;font-family:'Lato',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s}
+input:focus{border-color:var(--burg)}
+.btn{display:block;width:100%;padding:13px;background:var(--burg);color:#fff;border:none;border-radius:3px;font-family:'Lato',sans-serif;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;margin-top:20px;transition:background .2s}
+.btn:hover{background:#5e2222}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.error{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;padding:10px 14px;border-radius:3px;font-size:.875rem;margin-top:14px;display:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">GlobalPerks</div>
+  <div class="sub">Admin Panel</div>
+  <form id="form">
+    <label for="pw">Password</label>
+    <input type="password" id="pw" autofocus required>
+    <button type="submit" class="btn" id="btn">Sign In</button>
+    <div class="error" id="err"></div>
+  </form>
+</div>
+<script src="../config.js"></script>
+<script>
+  // Redirect if already logged in with a valid token
+  (function(){
+    const t = localStorage.getItem('gp_admin_token');
+    if (!t) return;
+    try {
+      const p = JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+      if (p.exp && Date.now()/1000 < p.exp) window.location.href = '/admin/bookings.html';
+    } catch(e){}
+  })();
+
+  document.getElementById('form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = document.getElementById('btn');
+    const err = document.getElementById('err');
+    btn.disabled = true; btn.textContent = 'Signing in…'; err.style.display = 'none';
+    try {
+      const res = await fetch(window.GP_BACKEND + '/api/admin/login/', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({password: document.getElementById('pw').value}),
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        localStorage.setItem('gp_admin_token', data.token);
+        window.location.href = '/admin/bookings.html';
+      } else {
+        err.textContent = data.error === 'invalid_password' ? 'Incorrect password.' : 'Login failed. Try again.';
+        err.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Sign In';
+      }
+    } catch(e) {
+      err.textContent = 'Connection error. Please try again.';
+      err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Sign In';
+    }
+  });
+</script>
+</body>
+</html>
