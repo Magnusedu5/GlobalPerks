@@ -22,6 +22,23 @@ logger = logging.getLogger(__name__)
 VALID_STATUSES = ['pending', 'confirmed', 'declined', 'completed', 'archived']
 
 
+class AdminJwtDebugView(APIView):
+    """Temporary: generate + verify a token in the same request to diagnose signature issues."""
+    def get(self, request):
+        from django.conf import settings as s
+        token = generate_token(0)
+        try:
+            payload = verify_token(token)
+            return Response({
+                'ok': True,
+                'key_prefix': s.SECRET_KEY[:8],
+                'key_len': len(s.SECRET_KEY),
+                'payload': payload,
+            })
+        except Exception as e:
+            return Response({'ok': False, 'error': str(e), 'key_prefix': s.SECRET_KEY[:8]})
+
+
 class AdminLoginView(APIView):
     def post(self, request):
         password = request.data.get('password', '')
