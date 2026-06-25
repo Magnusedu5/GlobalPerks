@@ -2,7 +2,6 @@ from django.urls import path
 from . import api_views
 
 urlpatterns = [
-    path('debug-jwt/',                               api_views.AdminJwtDebugView.as_view()),
     path('login/',                                    api_views.AdminLoginView.as_view()),
     path('logout/',                                   api_views.AdminLogoutView.as_view()),
     path('bookings/',                                 api_views.AdminBookingsView.as_view()),

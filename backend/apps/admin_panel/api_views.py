@@ -4,6 +4,8 @@ import re
 import uuid
 import bcrypt
 import shutil
+import cloudinary
+import cloudinary.uploader
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from rest_framework.views import APIView
@@ -22,21 +24,32 @@ logger = logging.getLogger(__name__)
 VALID_STATUSES = ['pending', 'confirmed', 'declined', 'completed', 'archived']
 
 
-class AdminJwtDebugView(APIView):
-    """Temporary: generate + verify a token in the same request to diagnose signature issues."""
-    def get(self, request):
-        from django.conf import settings as s
-        token = generate_token(0)
-        try:
-            payload = verify_token(token)
-            return Response({
-                'ok': True,
-                'key_prefix': s.SECRET_KEY[:8],
-                'key_len': len(s.SECRET_KEY),
-                'payload': payload,
-            })
-        except Exception as e:
-            return Response({'ok': False, 'error': str(e), 'key_prefix': s.SECRET_KEY[:8]})
+def _photo_url(request, filepath: str) -> str:
+    """Return a usable URL for a photo filepath (Cloudinary URL or local media)."""
+    if filepath.startswith('http'):
+        return filepath
+    return request.build_absolute_uri(settings.MEDIA_URL + filepath)
+
+
+def _upload_photo(file, folder: str) -> str:
+    """Upload image to Cloudinary and return the secure URL."""
+    cloudinary.config(
+        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+        api_key=os.environ.get('CLOUDINARY_API_KEY', ''),
+        api_secret=os.environ.get('CLOUDINARY_API_SECRET', ''),
+    )
+    result = cloudinary.uploader.upload(
+        file,
+        folder=folder,
+        resource_type='image',
+        use_filename=True,
+        unique_filename=True,
+    )
+    return result['secure_url']
+
+
+def _has_cloudinary() -> bool:
+    return bool(os.environ.get('CLOUDINARY_CLOUD_NAME'))
 
 
 class AdminLoginView(APIView):
@@ -118,10 +131,7 @@ class AdminGalleriesView(APIView):
             albums = service.get_all_albums()
             for a in albums:
                 a['photo_count'] = service.get_photo_count(a['id'])
-                a['cover_url'] = (
-                    request.build_absolute_uri(settings.MEDIA_URL + a['cover_photo'])
-                    if a.get('cover_photo') else None
-                )
+                a['cover_url'] = _photo_url(request, a['cover_photo']) if a.get('cover_photo') else None
             return Response({'galleries': albums})
         except Exception as e:
             logger.error(f"Admin galleries list error: {e}", exc_info=True)
@@ -177,10 +187,9 @@ class AdminGalleryDetailView(APIView):
                 return Response({'error': 'not_found'}, status=404)
             photos = service.get_photos(album['id'])
             for p in photos:
-                p['url'] = request.build_absolute_uri(settings.MEDIA_URL + p['filepath'])
+                p['url'] = _photo_url(request, p['filepath'])
             if album.get('cover_photo'):
-                album['cover_url'] = request.build_absolute_uri(
-                    settings.MEDIA_URL + album['cover_photo'])
+                album['cover_url'] = _photo_url(request, album['cover_photo'])
             return Response({'gallery': album, 'photos': photos})
         except Exception as e:
             logger.error(f"Admin gallery detail error: {e}", exc_info=True)
@@ -232,19 +241,25 @@ class AdminGalleryPhotosView(APIView):
             if not files:
                 return Response({'error': 'no_files'}, status=400)
 
-            gallery_dir = os.path.join(settings.MEDIA_ROOT, 'galleries', slug)
-            os.makedirs(gallery_dir, exist_ok=True)
             existing = service.get_photo_count(album['id'])
-            fs = FileSystemStorage(location=gallery_dir)
-            added = 0
+            use_cloud = _has_cloudinary()
 
+            if not use_cloud:
+                gallery_dir = os.path.join(settings.MEDIA_ROOT, 'galleries', slug)
+                os.makedirs(gallery_dir, exist_ok=True)
+                fs = FileSystemStorage(location=gallery_dir)
+
+            added = 0
             for i, f in enumerate(files):
                 ext = os.path.splitext(f.name)[1].lower()
                 if ext not in ['.jpg', '.jpeg', '.png', '.webp']:
                     continue
-                safe = f"{uuid.uuid4().hex}{ext}"
-                fs.save(safe, f)
-                path = f"galleries/{slug}/{safe}"
+                if use_cloud:
+                    path = _upload_photo(f, f'globalperks/galleries/{slug}')
+                else:
+                    safe = f"{uuid.uuid4().hex}{ext}"
+                    fs.save(safe, f)
+                    path = f"galleries/{slug}/{safe}"
                 service.add_photo(album_id=album['id'], filename=f.name,
                                   filepath=path, sort_order=existing + i)
                 if not album.get('cover_photo') and i == 0:
@@ -254,7 +269,7 @@ class AdminGalleryPhotosView(APIView):
 
             photos = service.get_photos(album['id'])
             for p in photos:
-                p['url'] = request.build_absolute_uri(settings.MEDIA_URL + p['filepath'])
+                p['url'] = _photo_url(request, p['filepath'])
             return Response({'photos': photos, 'added': added})
         except Exception as e:
             logger.error(f"Admin photo upload error: {e}", exc_info=True)

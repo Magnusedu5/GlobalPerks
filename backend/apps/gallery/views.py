@@ -1,3 +1,5 @@
+import time
+import jwt
 import logging
 from django.conf import settings
 from rest_framework.views import APIView
@@ -5,6 +7,24 @@ from rest_framework.response import Response
 from .services import TursoGalleryService
 
 logger = logging.getLogger(__name__)
+
+GALLERY_TOKEN_TTL = 86400 * 7  # 7 days
+
+
+def _make_gallery_token(slug: str) -> str:
+    now = int(time.time())
+    return jwt.encode(
+        {'sub': slug, 'type': 'gallery', 'iat': now, 'exp': now + GALLERY_TOKEN_TTL},
+        settings.SECRET_KEY, algorithm='HS256',
+    )
+
+
+def _verify_gallery_token(token: str, slug: str) -> bool:
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        return payload.get('type') == 'gallery' and payload.get('sub') == slug
+    except jwt.InvalidTokenError:
+        return False
 
 
 class GalleryUnlockView(APIView):
@@ -19,9 +39,10 @@ class GalleryUnlockView(APIView):
             password = request.data.get('password', '')
             if not service.verify_password(slug, password):
                 return Response({'error': 'Incorrect password'}, status=401)
-            request.session[f'gallery_unlocked_{slug}'] = True
+            token = _make_gallery_token(slug)
             return Response({
                 'success': True,
+                'gallery_token': token,
                 'album': {
                     'title': album['title'],
                     'client_name': album['client_name'],
@@ -38,7 +59,9 @@ class GalleryUnlockView(APIView):
 class GalleryPhotosView(APIView):
     def get(self, request, slug):
         try:
-            if not request.session.get(f'gallery_unlocked_{slug}'):
+            auth = request.headers.get('Authorization', '')
+            token = auth[7:] if auth.startswith('Bearer ') else request.GET.get('token', '')
+            if not token or not _verify_gallery_token(token, slug):
                 return Response({'error': 'Authentication required'}, status=401)
             service = TursoGalleryService()
             album = service.get_album_by_slug(slug)
@@ -50,9 +73,12 @@ class GalleryPhotosView(APIView):
             photo_list = []
             for p in photos:
                 filepath = p['filepath']
-                url = request.build_absolute_uri(
-                    settings.MEDIA_URL + filepath.replace('\\', '/')
-                )
+                if filepath.startswith('http'):
+                    url = filepath
+                else:
+                    url = request.build_absolute_uri(
+                        settings.MEDIA_URL + filepath.replace('\\', '/')
+                    )
                 photo_list.append({
                     'id': p['id'],
                     'url': url,
