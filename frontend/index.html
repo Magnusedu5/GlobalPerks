@@ -38,7 +38,7 @@
       --plum:                 #5E2D73;
       --plum-light:           #8B5CAD;
       --plum-pale:            rgba(94, 45, 115, 0.10);
-      --bg-plum:              #130A1C;
+      --bg-plum:              #3D1A55;
       --mauve:                #C9A8CC;
 
       --accent:               #7A2E2E;
@@ -197,7 +197,7 @@
       position: relative;
       display: flex;
       align-items: center;
-      background: linear-gradient(160deg, #2A1510 0%, #120A06 50%, #130A1C 100%);
+      background: linear-gradient(160deg, #2A1510 0%, #120A06 55%, #3D1A55 100%);
       background-size: cover;
       background-position: center;
       overflow: hidden;
@@ -407,6 +407,9 @@
     }
     .cta-band h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 3rem); color: var(--text-primary); margin-bottom: 16px; }
     .cta-band p { font-size: 14px; color: var(--text-secondary); margin-bottom: 32px; }
+    .cta-band .btn-primary { background: var(--plum); border-color: var(--plum); }
+    .cta-band .btn-primary:hover { background: var(--plum-light); border-color: var(--plum-light); }
+    .services-overview .section-label { color: var(--mauve); }
 
     /* ── FOOTER ── */
     footer {
