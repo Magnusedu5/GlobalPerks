@@ -15,7 +15,7 @@ from apps.bookings.services import TursoBookingService
 from apps.gallery.services import TursoGalleryService
 from apps.core.site_content_service import SiteContentService, SECTION_ORDER, SECTION_LABELS
 from apps.core.calendar_service import create_calendar_event
-from .jwt_auth import generate_token, admin_api_required
+from .jwt_auth import generate_token, verify_token, admin_api_required
 
 logger = logging.getLogger(__name__)
 
