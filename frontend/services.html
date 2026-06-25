@@ -15,6 +15,7 @@
       --border-dark:#3D1F14;--border-cream:#E0D0BC;--border-accent:rgba(212,165,116,0.4);
       --text-dark:#1A0A04;--text-light:#FAF0E6;--text-secondary-dark:#6B4A35;--text-secondary-light:#C4A882;
       --text-muted-dark:#A0826A;--text-muted-light:#7A5A44;
+      --plum:#5E2D73;--plum-light:#8B5CAD;--plum-pale:rgba(94,45,115,0.10);--bg-plum:#130A1C;--mauve:#C9A8CC;
       --accent:#7A2E2E;--accent-hover:#9B3A3A;--accent-warm:#C4753A;
       --font-display:'Cormorant Garamond',Georgia,serif;--font-heading:'Playfair Display',Georgia,serif;--font-body:'Lato','Helvetica Neue',sans-serif;
       --nav-height:72px;--max-width:1200px;
@@ -53,7 +54,7 @@
     @media(max-width:768px){.nav-links,.btn-nav{display:none;}.hamburger{display:flex;}}
 
     /* HERO */
-    .page-hero{min-height:50vh;background:linear-gradient(160deg,#2A1510 0%,#120A06 60%,#1E0F08 100%);display:flex;align-items:center;padding-top:var(--nav-height);}
+    .page-hero{min-height:50vh;background:linear-gradient(160deg,#2A1510 0%,#120A06 50%,#130A1C 100%);display:flex;align-items:center;padding-top:var(--nav-height);}
     .page-hero-content{padding:40px 24px;max-width:var(--max-width);margin:0 auto;}
     .eyebrow{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:16px;}
     .page-hero h1{font-family:var(--font-display);font-size:clamp(2.5rem,6vw,4.5rem);color:var(--text-primary);line-height:1.1;margin-bottom:16px;}
@@ -63,7 +64,7 @@
     .service-section{padding:100px 0;border-bottom:1px solid var(--border-dark);}
     .service-section:last-of-type{border-bottom:none;}
     .service-section.service-cream{background:var(--bg-cream);border-bottom-color:var(--border-cream);}
-    .service-section.service-dark{background:var(--bg-surface);}
+    .service-section.service-dark{background:linear-gradient(160deg,var(--bg-plum) 0%,var(--bg-surface) 100%);}
     .service-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
     .service-inner.reverse{direction:rtl;}
     .service-inner.reverse>*{direction:ltr;}
@@ -118,7 +119,7 @@
     .faq-answer p{font-size:13px;color:var(--text-secondary);line-height:1.8;padding-bottom:20px;font-weight:300;}
 
     /* CTA BAND */
-    .cta-band{background:var(--bg-surface);border-top:1px solid var(--border-gold);border-bottom:1px solid var(--border-gold);text-align:center;padding:80px 24px;}
+    .cta-band{background:linear-gradient(135deg,var(--bg-plum) 0%,var(--bg-dark) 70%);border-top:1px solid rgba(94,45,115,0.4);border-bottom:1px solid rgba(94,45,115,0.4);text-align:center;padding:80px 24px;}
     .cta-band h2{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,3rem);color:var(--text-primary);margin-bottom:16px;}
     .cta-band p{font-size:14px;color:var(--text-secondary);margin-bottom:32px;}
 
